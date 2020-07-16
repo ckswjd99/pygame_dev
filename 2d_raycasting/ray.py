@@ -6,7 +6,7 @@ import pygame.gfxdraw
 import poly
 
 
-whole = []
+ray_source_whole = []
 
 
 #---------- UTILS ----------#
@@ -30,7 +30,6 @@ def crossing_point(pos00, pos01, pos10, pos11):
     y4 = pos11[1]
     
     if (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4) == 0 or (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4) == 0:
-        print("parallel")
         return False
     
     px = ( (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4) )/( (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4) )
@@ -66,7 +65,7 @@ class ray:
         self.max_dist = max_dist
         self.max_pos = ( int(pos[0] + self.max_dist * cos(self.angle * pi)), int(pos[1] + self.max_dist * sin(self.angle * pi)) )
         self.end_pos = self.max_pos
-        whole.append(self)
+        ray_source_whole.append(self)
     
     def update(self):
         # update endpoint of ray
@@ -85,10 +84,46 @@ class ray:
         self.max_pos = ( int(pos[0] + self.max_dist * cos(self.angle * pi)), int(pos[1] + self.max_dist * sin(self.angle * pi)) )
         self.end_pos = self.max_pos
 
+    def update_angle(self, angle):
+        self.angle = angle
+        self.max_pos = ( int(self.pos[0] + self.max_dist * cos(angle * pi)), int(self.pos[1] + self.max_dist * sin(angle * pi)) )
+        self.end_pos = self.max_pos
+
     def render(self):
         pygame.gfxdraw.line(screen, self.pos[0], self.pos[1], self.end_pos[0], self.end_pos[1], WHITE)
 
 
+
+#---------- CLASS: Ray Source ----------#
+
+class ray_source:
+    def __init__(self, pos, angle, angle_range, num):
+        self.pos = pos
+        self.angle = angle
+        self.angle_range = angle_range
+        self.num = num
+
+        self.rays = []
+        for i in range(num):
+            self.rays.append( ray(pos, angle-angle_range/2+angle_range/(num-1)*i, 10000) )
+
+        ray_source_whole.append(self)
+
+    def update(self):
+        for r in self.rays:
+            r.update()
+
+    def update_pos(self, pos):
+        for r in self.rays:
+            r.update_pos(pos)
+
+    def update_angle(self, angle):
+        for i in range(self.num):
+            self.rays[i].update_angle(angle-self.angle_range/2+self.angle_range/(self.num-1)*i)
+
+    def render(self):
+        for r in self.rays:
+            r.render()
 
 
 

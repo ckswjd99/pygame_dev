@@ -43,8 +43,7 @@ class poly:
         elif len(self.pos) == 2:
             pygame.gfxdraw.line(screen, self.pos[0][0], self.pos[0][1], self.pos[1][0], self.pos[1][1], self.color)
         else:
-            print(self.pos)
-            pygame.gfxdraw.aapolygon(screen, self.pos, self.color)
+            pygame.gfxdraw.polygon(screen, self.pos, self.color)    # if use aapolygon, some lines are missing. reason unknown.
         
     def demol(self):
         for l in self.lines:
