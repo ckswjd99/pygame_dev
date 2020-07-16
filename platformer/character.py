@@ -1,6 +1,8 @@
 from setting import *
 import pygame, pygame.gfxdraw, numpy
 import environment as envi
+import entity
+from topology, util import *
 
 whole = []
 
@@ -37,6 +39,10 @@ class player(character):
         character.__init__(self, name, pos, b_stat, ph_stat)
         self.keyset = {'UP':119, 'LEFT':97, 'DOWN':115, 'RIGHT':100}
         self.keydown = {'UP':False, 'LEFT':False, 'DOWN':False, 'RIGHT':False}
+    
+    def poly(self):
+        #poly.poly([(self.pos[0]-self.ph_stat.width/2, self.pos[1]-self.ph_stat.height)], WHITE)
+        #UNDER CONST
     
     def update(self):
         # SELF ACCELERATION
@@ -79,6 +85,8 @@ class player(character):
             else:
                 self.pos[0] -= 1
             # CHECK AVAILABILITY HERE
+            for g in entity.ground_whole:   #UNDER CONST
+
         
         for i in range(numpy.abs(self.speed[1])):
             if self.speed[1] > 0:
@@ -90,7 +98,6 @@ class player(character):
         # AIR DRAG FORCE
         self.speed[0] = int(self.speed[0] * (1-self.ph_stat.air_drag))
         self.speed[1] = int(self.speed[1] * (1-self.ph_stat.air_drag))
-
         
     def render(self):
         hitbox = pygame.Rect(int(self.pos[0]-self.ph_stat.width/2), int(self.pos[1]-self.ph_stat.height), self.ph_stat.width, self.ph_stat.height)
