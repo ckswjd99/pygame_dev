@@ -2,7 +2,9 @@ from setting import *
 import pygame, pygame.gfxdraw, numpy
 import environment as envi
 import entity
-from topology, util import *
+import poly as polygon
+from topology import *
+from util import *
 
 whole = []
 
@@ -39,21 +41,18 @@ class player(character):
         character.__init__(self, name, pos, b_stat, ph_stat)
         self.keyset = {'UP':119, 'LEFT':97, 'DOWN':115, 'RIGHT':100}
         self.keydown = {'UP':False, 'LEFT':False, 'DOWN':False, 'RIGHT':False}
-    
-    def poly(self):
-        #poly.poly([(self.pos[0]-self.ph_stat.width/2, self.pos[1]-self.ph_stat.height)], WHITE)
-        #UNDER CONST
+        self.poly = polygon.poly([(self.pos[0]-self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2), (self.pos[0]-self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2)], WHITE)
     
     def update(self):
         # SELF ACCELERATION
         accel = [0,0]
         if self.keydown['UP'] == True:
             accel[1] -= self.b_stat.acc
-        elif self.keydown['LEFT'] == True:
+        if self.keydown['LEFT'] == True:
             accel[0] -= self.b_stat.acc
-        elif self.keydown['DOWN'] == True:
+        if self.keydown['DOWN'] == True:
             accel[1] += self.b_stat.acc
-        elif self.keydown['RIGHT'] == True:
+        if self.keydown['RIGHT'] == True:
             accel[0] += self.b_stat.acc
         
         if (-1)*self.b_stat.max_speed <= self.speed[0] + accel[0] and self.speed[0] + accel[0] <= self.b_stat.max_speed:
@@ -84,8 +83,17 @@ class player(character):
                 self.pos[0] += 1
             else:
                 self.pos[0] -= 1
+            self.poly.update_pos([(self.pos[0]-self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2), (self.pos[0]-self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2)])
             # CHECK AVAILABILITY HERE
-            for g in entity.ground_whole:   #UNDER CONST
+            collide = False
+            for g in entity.ground_whole:
+                if poly_collide(g.poly, self.poly):
+                    collide = True
+            if collide == True:
+                if self.speed[0] > 0:
+                    self.pos[0] -= 1
+                else:
+                    self.pos[0] += 1
 
         
         for i in range(numpy.abs(self.speed[1])):
@@ -93,14 +101,24 @@ class player(character):
                 self.pos[1] += 1
             else:
                 self.pos[1] -= 1
+            self.poly.update_pos([(self.pos[0]-self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2), (self.pos[0]-self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2)])
             # CHECK AVAILABILITY HERE
+            collide = False
+            for g in entity.ground_whole:
+                if poly_collide(g.poly, self.poly):
+                    collide = True
+            if collide == True:
+                if self.speed[1] > 0:
+                    self.pos[1] -= 1
+                else:
+                    self.pos[1] += 1
 
         # AIR DRAG FORCE
         self.speed[0] = int(self.speed[0] * (1-self.ph_stat.air_drag))
         self.speed[1] = int(self.speed[1] * (1-self.ph_stat.air_drag))
         
     def render(self):
-        hitbox = pygame.Rect(int(self.pos[0]-self.ph_stat.width/2), int(self.pos[1]-self.ph_stat.height), self.ph_stat.width, self.ph_stat.height)
+        hitbox = pygame.Rect(int(self.pos[0]-self.ph_stat.width/2), int(self.pos[1]-self.ph_stat.height/2), self.ph_stat.width, self.ph_stat.height)
         pygame.gfxdraw.rectangle(screen, hitbox, WHITE)
         
             
@@ -111,6 +129,8 @@ def render():
     screen.fill(BLACK)
     for c in whole:
         c.render()
+    for g in entity.ground_whole:
+        g.render()
 
 def update():
     for c in whole:
@@ -123,6 +143,8 @@ if __name__ == "__main__":
     player_bstat = basic_stat(acc=3, jump_power=10, max_speed=10, hp=100)
     player_phstat = physics_stat(width=30, height=40, air_drag=0.2)
     player = player("1P", (500,400), player_bstat, player_phstat)
+
+    entity.ground((2,2))
     
     clock = pygame.time.Clock()
 

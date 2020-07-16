@@ -44,6 +44,9 @@ class poly:
             pygame.gfxdraw.line(screen, self.pos[0][0], self.pos[0][1], self.pos[1][0], self.pos[1][1], self.color)
         else:
             pygame.gfxdraw.polygon(screen, self.pos, self.color)    # if use aapolygon, some lines are missing. reason unknown.
+
+    def update_pos(self, pos):
+        self.pos = pos
         
     def demol(self):
         for l in self.lines:

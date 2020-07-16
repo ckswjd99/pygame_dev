@@ -39,6 +39,7 @@ if __name__ == "__main__":
     ground((1,1))
     ground((2,1))
     ground((3,1))
+    print(ground_whole[0].poly)
 
     for g in ground_whole:
         g.render()
