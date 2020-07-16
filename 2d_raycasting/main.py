@@ -7,13 +7,17 @@ import pygame
 def render():
     screen.fill(BLACK)
     
-    for e in effect.whole:
-        e.render()
+    for r in ray.whole:
+        r.render()
+        
+    for p in poly.whole:
+        p.render()
+    
 
 #MAIN UPDATE FUNC
 def update():
-    for e in effect.whole:
-        e.update()
+    for r in ray.whole:
+        r.update()
         
     render()
 
@@ -30,6 +34,9 @@ def mainloop():
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
                 done=True # Flag that we are done so we exit this loop
+            if event.type == pygame.MOUSEMOTION:
+                for r in ray.whole:
+                    r.update_pos(event.pos)
         
         update()    #call update funtion
         
