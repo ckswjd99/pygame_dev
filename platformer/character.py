@@ -41,7 +41,7 @@ class player(character):
         character.__init__(self, name, pos, b_stat, ph_stat)
         self.keyset = {'UP':119, 'LEFT':97, 'DOWN':115, 'RIGHT':100}
         self.keydown = {'UP':False, 'LEFT':False, 'DOWN':False, 'RIGHT':False}
-        self.poly = polygon.poly([(self.pos[0]-self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2), (self.pos[0]-self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2)], WHITE)
+        self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
     
     def update(self):
         # SELF ACCELERATION
@@ -83,17 +83,20 @@ class player(character):
                 self.pos[0] += 1
             else:
                 self.pos[0] -= 1
-            self.poly.update_pos([(self.pos[0]-self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2), (self.pos[0]-self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2)])
+            self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
+
             # CHECK AVAILABILITY HERE
             collide = False
             for g in entity.ground_whole:
-                if poly_collide(g.poly, self.poly):
+                if self.poly.colliderect(g.poly) == True:
                     collide = True
             if collide == True:
                 if self.speed[0] > 0:
                     self.pos[0] -= 1
                 else:
                     self.pos[0] += 1
+                self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
+                break
 
         
         for i in range(numpy.abs(self.speed[1])):
@@ -101,25 +104,27 @@ class player(character):
                 self.pos[1] += 1
             else:
                 self.pos[1] -= 1
-            self.poly.update_pos([(self.pos[0]-self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2), (self.pos[0]-self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]+self.ph_stat.height/2), (self.pos[0]+self.ph_stat.width/2, self.pos[1]-self.ph_stat.height/2)])
+            self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
+
             # CHECK AVAILABILITY HERE
             collide = False
             for g in entity.ground_whole:
-                if poly_collide(g.poly, self.poly):
+                if self.poly.colliderect(g.poly) == True:
                     collide = True
             if collide == True:
                 if self.speed[1] > 0:
                     self.pos[1] -= 1
                 else:
                     self.pos[1] += 1
+                self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
+                break
 
         # AIR DRAG FORCE
         self.speed[0] = int(self.speed[0] * (1-self.ph_stat.air_drag))
         self.speed[1] = int(self.speed[1] * (1-self.ph_stat.air_drag))
         
     def render(self):
-        hitbox = pygame.Rect(int(self.pos[0]-self.ph_stat.width/2), int(self.pos[1]-self.ph_stat.height/2), self.ph_stat.width, self.ph_stat.height)
-        pygame.gfxdraw.rectangle(screen, hitbox, WHITE)
+        pygame.gfxdraw.rectangle(screen, self.poly, WHITE)
         
             
             

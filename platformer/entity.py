@@ -1,7 +1,7 @@
 import pygame, numpy, poly
 from setting import *
 
-tile_size = 50
+tile_size = 25
 
 ground_whole = []
 
@@ -19,16 +19,25 @@ class block:
 class ground(block):
     def __init__(self, pos_tile):
         block.__init__(self, pos_tile)
-        self.poly = poly.poly([(self.x, self.y), (self.x+self.width, self.y), (self.x+self.width, self.y+self.height), (self.x, self.y+self.height)], RED)
+        self.poly = pygame.Rect(self.x, self.y, self.width, self.height)
         ground_whole.append(self)
     
     def update(self):
         pass
 
     def render(self):
-        self.poly.render()
+        pygame.gfxdraw.rectangle(screen, self.poly, RED)
         #hitbox = pygame.Rect(self.x, self.y, self.width, self.height)
         #pygame.gfxdraw.rectangle(screen, hitbox, RED)
+
+
+
+#---------- UTIL FUNCTION: BOARD ----------#
+def board(map):
+    for i in range(len(map)):
+        for j in range(len(map[i])):
+            if map[i][j] == "g":
+                ground((j,i))
 
 
 
