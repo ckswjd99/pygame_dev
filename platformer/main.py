@@ -25,6 +25,9 @@ if __name__ == "__main__":
     
     while not done:
         
+        camera_offset[0] -= (camera_offset[0]+player.pos[0]-500)/5
+        camera_offset[1] -= (camera_offset[1]+player.pos[1]-300)/5
+
         clock.tick(30)  # 게임의 화면 투사를 30Hz로 설정
 
         #-- EVENT MANIPULATION ------------------------------------------------------------------------------#

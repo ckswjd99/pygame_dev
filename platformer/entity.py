@@ -19,13 +19,15 @@ class ground(block):
     def __init__(self, pos_tile):
         block.__init__(self, pos_tile)
         self.poly = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.image = pygame.image.load("img/ground.png")
         ground_whole.append(self)
     
     def update(self):
         pass
 
     def render(self):
-        pygame.gfxdraw.rectangle(screen, self.poly, RED)
+        #pygame.gfxdraw.rectangle(screen, self.poly, RED)
+        screen.blit(self.image, (self.x + camera_offset[0], self.y + camera_offset[1]))
         #hitbox = pygame.Rect(self.x, self.y, self.width, self.height)
         #pygame.gfxdraw.rectangle(screen, hitbox, RED)
 

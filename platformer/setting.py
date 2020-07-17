@@ -22,7 +22,7 @@ screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Hello Game")
 
-camera = [0,0]
+camera_offset = [0,0]
 
 # MAP SETTING
 map = [

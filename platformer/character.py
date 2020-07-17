@@ -126,7 +126,7 @@ class player(character):
         
     def render(self):
         #pygame.gfxdraw.rectangle(screen, self.poly, WHITE)
-        screen.blit(self.image, self.pos)
+        screen.blit(self.image, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1]))
         
             
             
