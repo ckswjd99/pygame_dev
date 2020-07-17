@@ -1,9 +1,8 @@
 import pygame, numpy, poly
-from setting import *
 
 tile_size = 25
 
-ground_whole = []
+ground_whole = []   # blocks that BLOCKS characters
 
 #---------- PRIMITIVE CLASS: BLOCK ----------#
 class block:
@@ -14,7 +13,7 @@ class block:
         self.width = tile_size
         self.height = tile_size
 
-
+from setting import *
 #---------- CHILDREN CLASS: GROUND ----------#
 class ground(block):
     def __init__(self, pos_tile):

@@ -42,6 +42,7 @@ class player(character):
         self.keyset = {'UP':119, 'LEFT':97, 'DOWN':115, 'RIGHT':100}
         self.keydown = {'UP':False, 'LEFT':False, 'DOWN':False, 'RIGHT':False}
         self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
+        self.image = pygame.image.load("img/player.png")
     
     def update(self):
         # SELF ACCELERATION
@@ -124,7 +125,8 @@ class player(character):
         self.speed[1] = int(self.speed[1] * (1-self.ph_stat.air_drag))
         
     def render(self):
-        pygame.gfxdraw.rectangle(screen, self.poly, WHITE)
+        #pygame.gfxdraw.rectangle(screen, self.poly, WHITE)
+        screen.blit(self.image, self.pos)
         
             
             

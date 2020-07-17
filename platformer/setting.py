@@ -22,6 +22,8 @@ screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Hello Game")
 
+camera = [0,0]
+
 # MAP SETTING
 map = [
         ["g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g"],
@@ -50,10 +52,8 @@ map = [
         ["g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g","g"]
     ]
 
-    #-- GENERATE PLAYER ------------------------------------------------------------------------------#
-    player_bstat = ch.basic_stat(acc=3, jump_power=10, max_speed=10, hp=100)
-    player_phstat = ch.physics_stat(width=20, height=20, air_drag=0.2)
-    player = ch.player("1P", (500,400), player_bstat, player_phstat)
-
-    #-- GENERATE BLOCKS ------------------------------------------------------------------------------#
-    entity.board(map)
+#-- GENERATE PLAYER ------------------------------------------------------------------------------#
+import character as ch
+player_bstat = ch.basic_stat(acc=3, jump_power=10, max_speed=10, hp=100)
+player_phstat = ch.physics_stat(width=20, height=20, air_drag=0.2)
+player = ch.player("1P", (500,400), player_bstat, player_phstat)

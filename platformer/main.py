@@ -1,12 +1,4 @@
 from setting import *
-import pygame, pygame.gfxdraw, numpy
-import environment as envi
-import entity
-import poly as polygon
-import character as ch
-from topology import *
-from util import *
-
 
 def render():
     screen.fill(BLACK)
@@ -22,9 +14,10 @@ def update():
     render()
 
 if __name__ == "__main__":
-    
 
-    
+    #-- GENERATE BLOCKS ------------------------------------------------------------------------------#
+    import entity
+    entity.board(map)
 
     clock = pygame.time.Clock()
 
