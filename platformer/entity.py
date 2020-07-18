@@ -31,7 +31,7 @@ from setting import *
 class wall(block):
     def __init__(self, parent_map, pos_tile):
         block.__init__(self, parent_map, pos_tile)
-        self.image = pygame.image.load("img/wall.png")
+        self.image = pygame.image.load("img/block/wall.png")
         wall_whole.append(self)
 
         self.collision_character = True
@@ -48,12 +48,29 @@ class wall(block):
 
 
 
+#---------- CHILDREN CLASS: INVISIBLE WALL ----------#
+class invisible_wall(block):
+    def __init__(self, parent_map, pos_tile):
+        block.__init__(self, parent_map, pos_tile)
+        self.image = pygame.image.load("img/block/wall.png")
+        wall_whole.append(self)
+
+        self.collision_character = True
+        self.collision_ray = True
+    
+    def update(self):
+        pass
+
+    def render(self):
+        pass
+
+
 #---------- CHILDREN CLASS: EVENT BLOCK ----------#
 class eventblock(block):
     def __init__(self, parent_map, pos_tile, condition, func):
         block.__init__(self, parent_map, pos_tile)
-        self.image_inactive = pygame.image.load("img/eventblock_inactive.png")
-        self.image_active = pygame.image.load("img/eventblock_active.png")
+        self.image_inactive = pygame.image.load("img/block/eventblock_inactive.png")
+        self.image_active = pygame.image.load("img/block/eventblock_active.png")
         self.condition = condition
         self.func = func
         self.active = False
@@ -100,7 +117,7 @@ def board(parent_map, map_array):
     for i in range(len(map_array)):
         for j in range(len(map_array[i])):
             if map_array[i][j] == "g":
-                result.append( wall(parent_map, (j,i)) )
+                result.append( wall(parent_map, (i,j)) )
     return result
 
 

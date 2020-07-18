@@ -49,7 +49,7 @@ class player(character):
         self.keyset = {'UP':119, 'LEFT':97, 'DOWN':115, 'RIGHT':100}
         self.keydown = {'UP':False, 'LEFT':False, 'DOWN':False, 'RIGHT':False}
         self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
-        self.image = pygame.image.load("img/player.png")
+        self.image = pygame.image.load("img/character/player.png")
     
     def update(self):
         # SELF ACCELERATION
