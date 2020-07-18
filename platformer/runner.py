@@ -1,5 +1,5 @@
 from setting import *
-import map
+import mapping
 
 class runner:
     def __init__(self, player, start_map):
@@ -10,6 +10,8 @@ class runner:
         clock = pygame.time.Clock()
 
         done = False
+
+        self.map_now.start(self.player, self.map_now.spawn_list['start'])
 
         while not done:
 
@@ -25,7 +27,7 @@ class runner:
 
             pygame.display.flip()
 
-game_run = runner(player, map.maps['test_map'])
+game_run = runner(player, mapping.maps['test_map2'])
 
 if __name__ == "__main__":
     game_run.run()

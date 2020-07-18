@@ -100,6 +100,9 @@ class player(character):
         self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
         self.image = pygame.image.load("img/character/player.png")
         self.slot = [False, False, False, False]
+
+    def set_map_now(self, mapping):
+        self.map_now = mapping
     
     def update(self):
 
@@ -179,7 +182,7 @@ class player(character):
 
             # CHECK AVAILABILITY HERE
             collide = False
-            for g in entity.wall_whole:
+            for g in self.map_now.blocks:
                 if self.poly.colliderect(g.poly) == True:
                     collide = True
             if collide == True:
@@ -199,7 +202,7 @@ class player(character):
 
             # CHECK AVAILABILITY HERE
             collide = False
-            for g in entity.wall_whole:
+            for g in self.map_now.blocks:
                 if self.poly.colliderect(g.poly) == True:
                     collide = True
             if collide == True:
