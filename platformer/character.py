@@ -9,13 +9,15 @@ from util import *
 
 whole = []
 
+
 #---------- INFO CONTAINING CLASS ----------#
 class basic_stat:
-    def __init__(self, acc, jump_power, max_speed, hp):
+    def __init__(self, acc, jump_power, max_speed, max_hp, max_mp):
         self.acc = acc
         self.jump_power = jump_power
         self.max_speed = max_speed
-        self.hp = hp
+        self.max_hp = max_hp
+        self.max_mp = max_mp
 
 class physics_stat:
     def __init__(self, width, height, air_drag):
@@ -32,7 +34,27 @@ class character:
         self.speed = [0,0]
         self.acc_ext = [0,0]
         self.b_stat = b_stat
+        self.hp = b_stat.max_hp
+        self.mp = b_stat.max_mp
         self.ph_stat = ph_stat
+        self.harms = []
+
+        self.controlled = { # Value means ticks left
+            'rooted': 0,
+            'stunned': 0,
+            'airborne': 0,
+            'exhaust': 0,
+            'blinded': 0
+            }
+        self.disorder_tick = {
+            'poisoned': 0,
+            'burning': 0
+        }
+        self.disorder_amount = {
+            'poisoned': 0,
+            'burning': 0
+        }
+
         whole.append(self)
 
         self.footprint_delay = 3
@@ -40,6 +62,12 @@ class character:
 
     def replace(self, pos):
         self.pos = list(pos)
+
+    def damaged(self, damage):
+        self.harms.append(damage)
+
+    def dead(self):
+        pass
 
 
 #---------- CHILDREN CLASS: PLAYER ----------#
@@ -52,6 +80,9 @@ class player(character):
         self.image = pygame.image.load("img/character/player.png")
     
     def update(self):
+
+        #-- MOVEMENT ------------------------------------------------------------------------------#
+
         # SELF ACCELERATION
         accel = [0,0]
         if self.keydown['UP'] == True:
@@ -105,7 +136,6 @@ class player(character):
                     self.pos[0] += 1
                 self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
                 break
-
         
         for i in range(numpy.abs(self.speed[1])):
             if self.speed[1] > 0:
@@ -130,6 +160,20 @@ class player(character):
         # AIR DRAG FORCE
         self.speed[0] = int(self.speed[0] * (1-self.ph_stat.air_drag))
         self.speed[1] = int(self.speed[1] * (1-self.ph_stat.air_drag))
+        
+        #-- \MOVEMENT ------------------------------------------------------------------------------#
+
+
+
+        #-- HARMS ------------------------------------------------------------------------------#
+        
+        for h in self.harms:
+            self.hp -= h.amount
+            self.harms.remove(h)
+        if self.hp <= 0:
+            self.dead()
+
+        #-- \HARMS ------------------------------------------------------------------------------#
         
     def render(self):
         #pygame.gfxdraw.rectangle(screen, self.poly, WHITE)

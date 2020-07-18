@@ -3,6 +3,8 @@ import pygame
 import entity
 import effect
 import UI
+import character
+import attack
 
 # MAP EXAMPLE
 map_temp = [
@@ -37,8 +39,8 @@ class map:
     def __init__(self, player, size_tiles):
         self.player = player
         self.size_tiles = size_tiles
+        
         self.blocks = []
-
         for i in range(-1, size_tiles[0]+1):
             self.blocks.append( entity.invisible_wall(self, (i,-1)) )
             self.blocks.append( entity.invisible_wall(self, (i,size_tiles[1])) )
@@ -47,6 +49,8 @@ class map:
             self.blocks.append( entity.invisible_wall(self, (size_tiles[0],i)) )
 
         self.characters = []
+
+        self.UI = UI.UI(self)
 
     def background_setting(self, image):
         self.image_background = image
@@ -108,12 +112,16 @@ class map:
         for b in self.blocks:
             b.update()
 
+        # UI UPDATE
+        self.UI.update()
+
     def render(self):
         # THINGS TO RENDER:
         #   BACKGROUND
         #   BLOCKS
         #   EFFECTS
         #   PLAYER
+        #   UI
 
         # BACKGROUND RENDER
         screen.blit(self.image_background, (int(camera_offset[0]), int(camera_offset[1])))
@@ -128,6 +136,9 @@ class map:
 
         # PLAYER RENDER
         self.player.render()
+
+        # UI RENDER
+        self.UI.render()
         
 
 
@@ -140,7 +151,7 @@ if __name__ == "__main__":
     map_now.map_setting(map_temp, {'start': (50,300)})
     map_now.background_setting(pygame.image.load("img/background.png"))
     map_now.start(player, map_now.spawn_list['start'])
-    map_now.add_block( entity.eventblock(map_now, (5,5), entity.PLAYER_COLLIDE, lambda: print("HI")) )
+    map_now.add_block( entity.eventblock(map_now, (5,5), entity.PLAYER_COLLIDE, lambda: map_now.player.harms.append(attack.damage(5,False))) )
 
     import entity
 
@@ -154,12 +165,10 @@ if __name__ == "__main__":
 
         #-- UPDATE FUNCTION ------------------------------------------------------------------------------#
         map_now.update()    # Update Map
-        UI.update()      # Update UI
 
         #-- REDNER FUNCTION ------------------------------------------------------------------------------#
         screen.fill(BLACK)
         map_now.render()
-        UI.render()
 
         pygame.display.flip()
             
