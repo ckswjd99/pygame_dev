@@ -7,7 +7,6 @@ PLAYER_COLLIDE = 0
 CHARACTER_COLLIDE = 1
 
 
-
 wall_whole = []   # blocks that BLOCKS characters
 
 #---------- PRIMITIVE CLASS: BLOCK ----------#
