@@ -1,26 +1,41 @@
 import pygame, numpy, poly
 
-tile_size = 25
+TILE_SIZE = 25
 
-ground_whole = []   # blocks that BLOCKS characters
+#---------- CONSTANTS ----------#
+PLAYER_COLLIDE = 0
+CHARACTER_COLLIDE = 1
+
+
+
+wall_whole = []   # blocks that BLOCKS characters
 
 #---------- PRIMITIVE CLASS: BLOCK ----------#
 class block:
-    def __init__(self, pos_tile):
+    def __init__(self, parent_map, pos_tile):
+        self.map = parent_map
         self.pos_tile = pos_tile
-        self.x = pos_tile[0]*tile_size
-        self.y = pos_tile[1]*tile_size
-        self.width = tile_size
-        self.height = tile_size
+        self.x = pos_tile[0]*TILE_SIZE
+        self.y = pos_tile[1]*TILE_SIZE
+        self.width = TILE_SIZE
+        self.height = TILE_SIZE
+        self.poly = pygame.Rect(self.x, self.y, self.width, self.height)
+        
+        self.collision_character = False
+        self.collision_ray = False
+
+
 
 from setting import *
-#---------- CHILDREN CLASS: GROUND ----------#
-class ground(block):
-    def __init__(self, pos_tile):
-        block.__init__(self, pos_tile)
-        self.poly = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.image = pygame.image.load("img/ground.png")
-        ground_whole.append(self)
+#---------- CHILDREN CLASS: WALL ----------#
+class wall(block):
+    def __init__(self, parent_map, pos_tile):
+        block.__init__(self, parent_map, pos_tile)
+        self.image = pygame.image.load("img/wall.png")
+        wall_whole.append(self)
+
+        self.collision_character = True
+        self.collision_ray = True
     
     def update(self):
         pass
@@ -33,13 +48,59 @@ class ground(block):
 
 
 
+#---------- CHILDREN CLASS: EVENT BLOCK ----------#
+class eventblock(block):
+    def __init__(self, parent_map, pos_tile, condition, func):
+        block.__init__(self, parent_map, pos_tile)
+        self.image_inactive = pygame.image.load("img/eventblock_inactive.png")
+        self.image_active = pygame.image.load("img/eventblock_active.png")
+        self.condition = condition
+        self.func = func
+        self.active = False
+        
+        self.collision_character = False
+        self.collision_ray = False
+    
+    def update(self):
+        if self.active == False:
+            if self.condition == PLAYER_COLLIDE:
+                if self.poly.colliderect(self.map.player.poly):
+                    self.func()
+                    self.active = True
+            elif self.condition == CHARACTER_COLLIDE:
+                for ch in self.map.characters:
+                    if self.poly.colliderect(ch.poly):
+                        self.func()
+                        self.active = True
+        else:
+            self.active = False
+            if self.condition == PLAYER_COLLIDE:
+                if self.poly.colliderect(self.map.player.poly):
+                    self.active = True
+            elif self.condition == CHARACTER_COLLIDE:
+                for ch in self.map.characters:
+                    if self.poly.colliderect(ch.poly):
+                        self.active = True
+
+    def render(self):
+        if self.active == False:
+            screen.blit(self.image_inactive, (self.x + camera_offset[0], self.y + camera_offset[1]))
+        else:
+            screen.blit(self.image_active, (self.x + camera_offset[0], self.y + camera_offset[1]))
+
+        
+
+
+        
+
+
 #---------- UTIL FUNCTION: BOARD ----------#
-def board(map):
+def board(parent_map, map_array):
     result = []
-    for i in range(len(map)):
-        for j in range(len(map[i])):
-            if map[i][j] == "g":
-                result.append( ground((j,i)) )
+    for i in range(len(map_array)):
+        for j in range(len(map_array[i])):
+            if map_array[i][j] == "g":
+                result.append( wall(parent_map, (j,i)) )
     return result
 
 
@@ -74,12 +135,12 @@ map_array_example = [
 
 #----------- TEST BENCH -----------#
 if __name__ == "__main__":
-    ground((1,1))
-    ground((2,1))
-    ground((3,1))
-    print(ground_whole[0].poly)
+    wall(False, (1,1))
+    wall(False, (2,1))
+    wall(False, (3,1))
+    print(wall_whole[0].poly)
 
-    for g in ground_whole:
+    for g in wall_whole:
         g.render()
     
     pygame.display.flip()

@@ -22,7 +22,7 @@ screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Hello Game")
 
-camera_offset = [20,20]
+camera_offset = [0,0]
 
 #-- GENERATE PLAYER ------------------------------------------------------------------------------#
 import character as ch

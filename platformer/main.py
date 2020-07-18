@@ -4,7 +4,7 @@ def render():
     screen.fill(BLACK)
     for c in ch.whole:
         c.render()
-    for g in entity.ground_whole:
+    for g in entity.wall_whole:
         g.render()
 
 def update():

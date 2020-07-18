@@ -1,6 +1,7 @@
 from setting import *
 import pygame
 import entity
+import effect
 
 # MAP EXAMPLE
 map_temp = [
@@ -35,21 +36,28 @@ class map:
     def __init__(self, player, size_tiles):
         self.player = player
         self.size_tiles = size_tiles
-        camera_offset = [self.player.pos[0]-size[0]/2, self.player.pos[1]-size[1]/2]
+        self.blocks = []
+
+        self.characters = []
 
     def map_setting(self, block_array, spawn_list):
-        self.blocks = entity.board(block_array)
+        self.blocks = entity.board(self, block_array)
         self.spawn_list = spawn_list
+
+    def add_block(self, *block):
+        for b in block:
+            self.blocks.append(b)
 
     def start(self, player, pos):
         self.player.replace(pos)
-        camera_offset = [self.player.pos[0]-size[0], self.player.pos[1]-size[1]]
+        camera_offset = [-self.player.pos[0]+size[0]/2, -self.player.pos[1]+size[1]/2]
     
     def update(self):
         # THINGS TO UPDATE:
         #   PLAYER
+        #   EFFECTS
         #   CAMERA
-        #   
+        #   BLOCKS
 
         # EVENT MANIPULATION
         for event in pygame.event.get():  # User did something
@@ -74,25 +82,37 @@ class map:
                 elif event.key == player.keyset['RIGHT']:  # key 'd'
                     player.keydown['RIGHT'] = False
 
+        # PLAYER UPDATE
+        self.player.update()
+
+        # EFFECTS UPDATE
+        for e in effect.whole:
+            e.update()
+
         # CAMERA MOVEMENT
         camera_offset[0] -= (camera_offset[0]+self.player.pos[0]-size[0]/2)/5
         camera_offset[1] -= (camera_offset[1]+self.player.pos[1]-size[1]/2)/5
 
-        # PLAYER UPDATE
-        self.player.update()
+        # BLOCKS UPDATE
+        for b in self.blocks:
+            b.update()
 
     def render(self):
         # THINGS TO RENDER:
-        #   PLAYER
         #   BLOCKS
-        #   
-
-        # PLAYER RENDER
-        self.player.render()
+        #   EFFECTS
+        #   PLAYER
 
         # BLOCKS RENDER
         for b in self.blocks:
             b.render()
+
+        # EFFECTS RENDER
+        for e in effect.whole:
+            e.render()
+
+        # PLAYER RENDER
+        self.player.render()
         
 
 
@@ -104,9 +124,9 @@ if __name__ == "__main__":
     map_now = map(player, (24, 40))
     map_now.map_setting(map_temp, {'start': (50,300)})
     map_now.start(player, map_now.spawn_list['start'])
+    map_now.add_block( entity.eventblock(map_now, (5,5), entity.PLAYER_COLLIDE, lambda: print("HI")) )
 
     import entity
-    entity.board(map_temp)
 
     clock = pygame.time.Clock()
 
@@ -119,11 +139,10 @@ if __name__ == "__main__":
         #-- UPDATE FUNCTION ------------------------------------------------------------------------------#
         map_now.update()  # call update funtion
 
-        print(camera_offset)
-
         #-- REDNER FUNCTION ------------------------------------------------------------------------------#
         screen.fill(BLACK)
         map_now.render()
 
         pygame.display.flip()
             
+    quit()

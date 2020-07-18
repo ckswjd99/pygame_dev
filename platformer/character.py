@@ -2,6 +2,7 @@ from setting import *
 import pygame, pygame.gfxdraw, numpy
 import environment as envi
 import entity
+import effect
 import poly as polygon
 from topology import *
 from util import *
@@ -33,6 +34,9 @@ class character:
         self.b_stat = b_stat
         self.ph_stat = ph_stat
         whole.append(self)
+
+        self.footprint_delay = 3
+        self.footprint_tick = self.footprint_delay
 
     def replace(self, pos):
         self.pos = list(pos)
@@ -91,7 +95,7 @@ class player(character):
 
             # CHECK AVAILABILITY HERE
             collide = False
-            for g in entity.ground_whole:
+            for g in entity.wall_whole:
                 if self.poly.colliderect(g.poly) == True:
                     collide = True
             if collide == True:
@@ -112,7 +116,7 @@ class player(character):
 
             # CHECK AVAILABILITY HERE
             collide = False
-            for g in entity.ground_whole:
+            for g in entity.wall_whole:
                 if self.poly.colliderect(g.poly) == True:
                     collide = True
             if collide == True:
@@ -131,6 +135,13 @@ class player(character):
         #pygame.gfxdraw.rectangle(screen, self.poly, WHITE)
         screen.blit(self.image, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1]))
         
+        # FOOTPRINT: NOT SO COOL, SO NOT USING
+        #if self.footprint_tick == 0:
+        #    effect.spark_gravity_rectangle((self.pos[0]+self.ph_stat.width/2, self.pos[1]+self.ph_stat.height*2/3), self.footprint_delay*2, (0,1), 3, 5, WHITE, 5)
+        #    self.footprint_tick = self.footprint_delay
+        #else:
+        #    self.footprint_tick -= 1
+        
             
             
             
@@ -139,7 +150,7 @@ def render():
     screen.fill(BLACK)
     for c in whole:
         c.render()
-    for g in entity.ground_whole:
+    for g in entity.wall_whole:
         g.render()
 
 def update():
@@ -154,7 +165,7 @@ if __name__ == "__main__":
     player_phstat = physics_stat(width=30, height=40, air_drag=0.2)
     player = player("1P", (500,400), player_bstat, player_phstat)
 
-    entity.ground((2,2))
+    entity.wall((2,2))
     
     clock = pygame.time.Clock()
 
