@@ -36,8 +36,18 @@ class camera:
     def move(self, x, y):
         if self.x_limit[0] < self.offset[0]+x and self.offset[0]+x < self.x_limit[1]:
             self.offset[0] += x
+        elif self.x_limit[0] > self.offset[0]+x:
+            self.offset[0] = self.x_limit[0]
+        elif self.x_limit[1] < self.offset[0]+x:
+            self.offset[0] = self.x_limit[1]
+
         if self.y_limit[0] < self.offset[1]+y and self.offset[1]+y < self.y_limit[1]:
             self.offset[1] += y
+        elif self.y_limit[0] > self.offset[1]+y:
+            self.offset[1] = self.y_limit[0]
+        elif self.y_limit[1] < self.offset[1]+y:
+            self.offset[1] = self.y_limit[1]
+
     def set_x_limit(self, x1, x2):
         self.x_limit[0] = x1
         self.x_limit[1] = x2

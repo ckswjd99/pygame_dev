@@ -17,6 +17,7 @@ class runner:
 
             #-- UPDATE FUNCTION ------------------------------------------------------------------------------#
             self.map_now.update()    # Update Map
+            #print(cam.offset)
 
             #-- REDNER FUNCTION ------------------------------------------------------------------------------#
             screen.fill(BLACK)

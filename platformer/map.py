@@ -65,9 +65,11 @@ class map:
 
     def start(self, player, pos):
         self.player.replace(pos)
-        cam.set_x_limit(-200, self.size_tiles[0]*entity.TILE_SIZE+200)
-        cam.set_y_limit(-200, self.size_tiles[1]*entity.TILE_SIZE+200)
-        #cam.replace()
+        cam.set_x_limit(-200, 200)
+        print(self.size_tiles[0]*entity.TILE_SIZE)
+        cam.set_y_limit(-200, 200)
+        cam.replace(-player.pos[0]+size[0]/2, -player.pos[1]+size[1]/2)
+        print(cam.offset)
     
     def update(self):
         # THINGS TO UPDATE:
@@ -106,7 +108,7 @@ class map:
             e.update()
 
         # CAMERA MOVEMENT
-        cam.move(-(cam.offset[0]+player.pos[0]-500)/5, -(cam.offset[1]+player.pos[1]-300)/5 )
+        cam.move(-(cam.offset[0]+player.pos[0]-size[0]/2)/5, -(cam.offset[1]+player.pos[1]-size[1]/2)/5 )
         
         # BLOCKS UPDATE
         for b in self.blocks:
