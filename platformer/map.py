@@ -180,3 +180,20 @@ if __name__ == "__main__":
         pygame.display.flip()
             
     quit()
+
+
+
+#-- MAPS FOR USE ------------------------------------------------------------------------------#
+maps = {}
+temp = map(player, (40, 24))
+temp.map_setting(map_temp, {'start': (50,300)})
+temp.background_setting(pygame.image.load("img/background.png"))
+temp.start(player, temp.spawn_list['start'])
+temp.add_block( entity.eventblock(temp, (5,5), entity.PLAYER_COLLIDE, lambda: temp.player.harms.append(attack.damage(5, False))) )
+temp.add_block( entity.eventblock(temp, (10,5), entity.PLAYER_COLLIDE, lambda: temp.player.set_acc((3,3), 10)) )
+temp.add_block( entity.eventblock(temp, (15,5), entity.PLAYER_COLLIDE, lambda: temp.player.set_controlled('stunned', 30)) )
+temp.add_block( entity.eventblock(temp, (20,5), entity.PLAYER_COLLIDE, lambda: temp.player.set_controlled('exhaust', 30)) )
+temp.add_block( entity.eventblock(temp, (25,5), entity.PLAYER_COLLIDE, lambda: temp.player.set_controlled('airborne', 10)) )
+temp.add_block( entity.eventblock(temp, (30,5), entity.PLAYER_COLLIDE, lambda: temp.player.set_disorder('poisoned', 30, 1)) )
+temp.add_block( entity.eventblock(temp, (35,5), entity.PLAYER_COLLIDE, lambda: temp.player.set_disorder('burning', 300, 0.1)) )
+maps['test_map'] = temp
