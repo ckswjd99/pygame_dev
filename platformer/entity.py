@@ -42,7 +42,7 @@ class wall(block):
 
     def render(self):
         #pygame.gfxdraw.rectangle(screen, self.poly, RED)
-        screen.blit(self.image, (self.x + camera_offset[0], self.y + camera_offset[1]))
+        screen.blit(self.image, (self.x + cam.offset[0], self.y + cam.offset[1]))
         #hitbox = pygame.Rect(self.x, self.y, self.width, self.height)
         #pygame.gfxdraw.rectangle(screen, hitbox, RED)
 
@@ -101,9 +101,9 @@ class eventblock(block):
 
     def render(self):
         if self.active == False:
-            screen.blit(self.image_inactive, (self.x + camera_offset[0], self.y + camera_offset[1]))
+            screen.blit(self.image_inactive, (self.x + cam.offset[0], self.y + cam.offset[1]))
         else:
-            screen.blit(self.image_active, (self.x + camera_offset[0], self.y + camera_offset[1]))
+            screen.blit(self.image_active, (self.x + cam.offset[0], self.y + cam.offset[1]))
 
         
 

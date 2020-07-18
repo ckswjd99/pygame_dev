@@ -99,6 +99,7 @@ class player(character):
         self.keydown = {'UP':False, 'LEFT':False, 'DOWN':False, 'RIGHT':False}
         self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
         self.image = pygame.image.load("img/character/player.png")
+        self.slot = [False, False, False, False]
     
     def update(self):
 
@@ -221,7 +222,6 @@ class player(character):
 
         # DISORDERS
         if self.disorder_tick['poisoned'] > 0:
-            print(self.disorder_amount['poisoned'], attack.POISON)
             self.damaged(attack.damage(self.disorder_amount['poisoned'], attack.POISON))
             self.disorder_tick['poisoned'] -= 1
         else:
@@ -243,21 +243,21 @@ class player(character):
     def render(self):
         #pygame.gfxdraw.rectangle(screen, self.poly, WHITE)
         if self.controlled['airborne'] == 0:
-            screen.blit(self.image, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1]))
+            screen.blit(self.image, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1]))
         else:
-            screen.blit(self.image, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1] - 15))
+            screen.blit(self.image, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 15))
 
         # DISORDER
         if self.controlled['stunned'] > 0:
-            screen.blit(img_stunned, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1] - 10))
+            screen.blit(img_stunned, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))
         if self.controlled['exhaust'] > 0:
-            screen.blit(img_exhaust, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1] - 10))
+            screen.blit(img_exhaust, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))
         if self.controlled['airborne'] > 0:
-            pygame.gfxdraw.filled_ellipse(screen, int(self.pos[0]+camera_offset[0]+self.ph_stat.width/2), int(self.pos[1]+camera_offset[1]+self.ph_stat.height-5), 10, 5, (0,0,0,127))
+            pygame.gfxdraw.filled_ellipse(screen, int(self.pos[0]+cam.offset[0]+self.ph_stat.width/2), int(self.pos[1]+cam.offset[1]+self.ph_stat.height-5), 10, 5, (0,0,0,127))
         if self.disorder_tick['poisoned'] > 0:
-            screen.blit(img_poisoned, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1] - 10))
+            screen.blit(img_poisoned, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))
         if self.disorder_tick['burning'] > 0:
-            screen.blit(img_burning, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1] - 10))
+            screen.blit(img_burning, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))
 
         # FOOTPRINT: NOT SO COOL, SO NOT USING
         #if self.footprint_tick == 0:

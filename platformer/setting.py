@@ -22,7 +22,30 @@ screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Hello Game")
 
-camera_offset = [0,0]
+# CAMERA SETTING
+class camera:
+    def __init__(self):
+        self.offset = [0,0]
+        self.x_limit = [0,0]
+        self.y_limit = [0,0]
+    def replace(self, x, y):
+        if self.x_limit[0] < x and x < self.x_limit[1]:
+            self.offset[0] = x
+        if self.y_limit[0] < y and y < self.y_limit[1]:
+            self.offset[1] = y
+    def move(self, x, y):
+        if self.x_limit[0] < self.offset[0]+x and self.offset[0]+x < self.x_limit[1]:
+            self.offset[0] += x
+        if self.y_limit[0] < self.offset[1]+y and self.offset[1]+y < self.y_limit[1]:
+            self.offset[1] += y
+    def set_x_limit(self, x1, x2):
+        self.x_limit[0] = x1
+        self.x_limit[1] = x2
+    def set_y_limit(self, y1, y2):
+        self.y_limit[0] = y1
+        self.y_limit[1] = y2
+
+cam = camera()
 
 #-- GENERATE PLAYER ------------------------------------------------------------------------------#
 import character as ch

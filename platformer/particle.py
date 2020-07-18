@@ -45,7 +45,7 @@ class spark_circle(particle):
             self.demol()
         
     def render(self):
-        pygame.gfxdraw.filled_circle(screen, self.pos[0]+camera_offset[0], self.pos[1]+camera_offset[1], self.size, pygame.Color(self.color[0], self.color[1], self.color[2], int(255*(self.life_left/self.life))))
+        pygame.gfxdraw.filled_circle(screen, self.pos[0]+cam.offset[0], self.pos[1]+cam.offset[1], self.size, pygame.Color(self.color[0], self.color[1], self.color[2], int(255*(self.life_left/self.life))))
 
 class spark_rectangle(particle):
     def __init__(self, eff, pos, life, speed, angle, size, color):
@@ -63,7 +63,7 @@ class spark_rectangle(particle):
             self.demol()
         
     def render(self):
-        pygame.gfxdraw.box(screen, pygame.Rect(self.pos[0]-self.size/2+camera_offset[0], self.pos[1]-self.size/2+camera_offset[1], self.size, self.size), pygame.Color(self.color[0], self.color[1], self.color[2],int(255*(self.life_left/self.life))))
+        pygame.gfxdraw.box(screen, pygame.Rect(self.pos[0]-self.size/2+cam.offset[0], self.pos[1]-self.size/2+cam.offset[1], self.size, self.size), pygame.Color(self.color[0], self.color[1], self.color[2],int(255*(self.life_left/self.life))))
 
 
 
@@ -86,7 +86,7 @@ class spark_gravity_circle(particle):
             self.demol()
         
     def render(self):
-        pygame.gfxdraw.filled_circle(screen, self.pos[0]+camera_offset[0], self.pos[1]+camera_offset[1], self.size, pygame.Color(self.color[0], self.color[1], self.color[2], int(255*(self.life_left/self.life))))
+        pygame.gfxdraw.filled_circle(screen, self.pos[0]+cam.offset[0], self.pos[1]+cam.offset[1], self.size, pygame.Color(self.color[0], self.color[1], self.color[2], int(255*(self.life_left/self.life))))
         
 class spark_gravity_rectangle(particle):
     def __init__(self, eff, pos, life, gravity, speed, angle, size, color):
@@ -105,7 +105,7 @@ class spark_gravity_rectangle(particle):
             self.demol()
         
     def render(self):
-        pygame.gfxdraw.box(screen, pygame.Rect(self.pos[0]-self.size/2+camera_offset[0], self.pos[1]-self.size/2+camera_offset[1], self.size, self.size), pygame.Color(self.color[0], self.color[1], self.color[2],int(255*(self.life_left/self.life))))
+        pygame.gfxdraw.box(screen, pygame.Rect(self.pos[0]-self.size/2+cam.offset[0], self.pos[1]-self.size/2+cam.offset[1], self.size, self.size), pygame.Color(self.color[0], self.color[1], self.color[2],int(255*(self.life_left/self.life))))
 
 
 
@@ -125,7 +125,7 @@ class wave_circle(particle):
             self.demol()
 
     def render(self):
-        pygame.gfxdraw.aacircle(screen, self.pos[0]+camera_offset[0], self.pos[1]+camera_offset[1], self.size, pygame.Color(self.color[0], self.color[1], self.color[2], int(255*(self.life_left/self.life))))
+        pygame.gfxdraw.aacircle(screen, self.pos[0]+cam.offset[0], self.pos[1]+cam.offset[1], self.size, pygame.Color(self.color[0], self.color[1], self.color[2], int(255*(self.life_left/self.life))))
 
 class wave_rectangle(particle):
     def __init__(self, eff, pos, life, speed, size, color):
@@ -141,7 +141,7 @@ class wave_rectangle(particle):
             self.demol()
 
     def render(self):
-        pygame.gfxdraw.rectangle(screen, pygame.Rect(self.pos[0]-self.size/2+camera_offset[1], self.pos[1]-self.size/2+camera_offset[0], self.size, self.size), pygame.Color(self.color[0], self.color[1], self.color[2],int(255*(self.life_left/self.life))))
+        pygame.gfxdraw.rectangle(screen, pygame.Rect(self.pos[0]-self.size/2+cam.offset[1], self.pos[1]-self.size/2+cam.offset[0], self.size, self.size), pygame.Color(self.color[0], self.color[1], self.color[2],int(255*(self.life_left/self.life))))
 
 
 
@@ -162,7 +162,7 @@ class gas_circle(particle):
             self.demol()
     
     def render(self):
-        pygame.gfxdraw.filled_circle(screen, self.pos[0]+camera_offset[0], self.pos[1]+camera_offset[1], int(self.size*(self.life_left/self.life)), self.color)
+        pygame.gfxdraw.filled_circle(screen, self.pos[0]+cam.offset[0], self.pos[1]+cam.offset[1], int(self.size*(self.life_left/self.life)), self.color)
 
 
 
