@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     #-- GENERATE BLOCKS ------------------------------------------------------------------------------#
     import entity
-    entity.board(map)
+    entity.board(entity.map_array_example)
 
     clock = pygame.time.Clock()
 

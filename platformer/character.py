@@ -34,6 +34,9 @@ class character:
         self.ph_stat = ph_stat
         whole.append(self)
 
+    def replace(self, pos):
+        self.pos = list(pos)
+
 
 #---------- CHILDREN CLASS: PLAYER ----------#
 class player(character):
