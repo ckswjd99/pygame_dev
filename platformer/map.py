@@ -8,7 +8,7 @@ import attack
 
 # MAP EXAMPLE
 map_temp = [
-        ["g","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
+        ["g","g","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
         ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
         ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
         ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
@@ -30,8 +30,8 @@ map_temp = [
         ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
         ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
         ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
-        ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
-        ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","g"]
+        ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","g"],
+        ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","g","g"]
     ]
 
 #---------- PRIMITIVE CLASS: MAP ----------#
@@ -65,7 +65,8 @@ class map:
 
     def start(self, player, pos):
         self.player.replace(pos)
-        camera_offset = [-self.player.pos[0]+size[0]/2, -self.player.pos[1]+size[1]/2]
+        camera_offset[0] = -player.pos[0]+size[0]/2
+        camera_offset[1] = -player.pos[1]+size[1]/2
     
     def update(self):
         # THINGS TO UPDATE:
@@ -73,7 +74,6 @@ class map:
         #   EFFECTS
         #   CAMERA
         #   BLOCKS
-
         # EVENT MANIPULATION
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
@@ -107,7 +107,7 @@ class map:
         # CAMERA MOVEMENT
         camera_offset[0] -= (camera_offset[0]+self.player.pos[0]-size[0]/2)/5
         camera_offset[1] -= (camera_offset[1]+self.player.pos[1]-size[1]/2)/5
-
+        
         # BLOCKS UPDATE
         for b in self.blocks:
             b.update()
@@ -151,7 +151,14 @@ if __name__ == "__main__":
     map_now.map_setting(map_temp, {'start': (50,300)})
     map_now.background_setting(pygame.image.load("img/background.png"))
     map_now.start(player, map_now.spawn_list['start'])
-    map_now.add_block( entity.eventblock(map_now, (5,5), entity.PLAYER_COLLIDE, lambda: map_now.player.harms.append(attack.damage(5,False))) )
+    map_now.add_block( entity.eventblock(map_now, (5,5), entity.PLAYER_COLLIDE, lambda: map_now.player.harms.append(attack.damage(5, False))) )
+    map_now.add_block( entity.eventblock(map_now, (10,5), entity.PLAYER_COLLIDE, lambda: map_now.player.set_acc((3,3), 10)) )
+    map_now.add_block( entity.eventblock(map_now, (15,5), entity.PLAYER_COLLIDE, lambda: map_now.player.set_controlled('stunned', 30)) )
+    map_now.add_block( entity.eventblock(map_now, (20,5), entity.PLAYER_COLLIDE, lambda: map_now.player.set_controlled('exhaust', 30)) )
+    map_now.add_block( entity.eventblock(map_now, (25,5), entity.PLAYER_COLLIDE, lambda: map_now.player.set_controlled('airborne', 10)) )
+    map_now.add_block( entity.eventblock(map_now, (30,5), entity.PLAYER_COLLIDE, lambda: map_now.player.set_disorder('poisoned', 30, 1)) )
+    map_now.add_block( entity.eventblock(map_now, (35,5), entity.PLAYER_COLLIDE, lambda: map_now.player.set_disorder('burning', 300, 0.1)) )
+    
 
     import entity
 

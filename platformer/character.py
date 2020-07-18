@@ -6,8 +6,15 @@ import effect
 import poly as polygon
 from topology import *
 from util import *
+import attack
 
 whole = []
+
+#---------- IMAGE FILES ----------#
+img_stunned = pygame.image.load("img/character/stunned.png")
+img_exhaust = pygame.image.load("img/character/exhaust.png")
+img_poisoned = pygame.image.load("img/character/poisoned.png")
+img_burning = pygame.image.load("img/character/burning.png")
 
 
 #---------- INFO CONTAINING CLASS ----------#
@@ -32,7 +39,7 @@ class character:
         self.name = name
         self.pos = list(pos)
         self.speed = [0,0]
-        self.acc_ext = [0,0]
+        self.acc_ext = []   # List of accelerations lasting some ticks, form: [(x,y), tick]
         self.b_stat = b_stat
         self.hp = b_stat.max_hp
         self.mp = b_stat.max_mp
@@ -46,13 +53,17 @@ class character:
             'exhaust': 0,
             'blinded': 0
             }
-        self.disorder_tick = {
+        self.disorder_tick = {  # Value means ticks left
             'poisoned': 0,
-            'burning': 0
+            'burning': 0,
+            'blinded': 0,
+            'slowed': 0
         }
         self.disorder_amount = {
-            'poisoned': 0,
-            'burning': 0
+            'poisoned': 0,  # Value means damage per tick
+            'burning': 0,   # Value means damage per tick
+            'blinded': 0,   # Value means radidus of scope
+            'slowed': 0     # Value means percentage of speed loss
         }
 
         whole.append(self)
@@ -63,8 +74,18 @@ class character:
     def replace(self, pos):
         self.pos = list(pos)
 
-    def damaged(self, damage):
+    def damaged(self, damage):  # Input: attack.damage
         self.harms.append(damage)
+
+    def set_acc(self, accel, tick):
+        self.acc_ext.append([accel, tick])
+
+    def set_controlled(self, kind, tick):
+        self.controlled[kind] += tick
+
+    def set_disorder(self, kind, tick, amount):
+        self.disorder_tick[kind] += tick
+        self.disorder_amount[kind] += amount
 
     def dead(self):
         pass
@@ -93,7 +114,28 @@ class player(character):
             accel[1] += self.b_stat.acc
         if self.keydown['RIGHT'] == True:
             accel[0] += self.b_stat.acc
+
+        #   RESTRICTION DUE TO DISORDER
+        if self.controlled['stunned'] > 0:
+            accel = [0,0]
+            self.controlled['stunned'] -= 1
+
+        if self.controlled['airborne'] > 0:
+            accel = [0,0]
+            self.controlled['airborne'] -= 1
+
+        if self.controlled['exhaust'] > 0:
+            if abs(accel[0]) < 1:
+                accel[0] = 0
+            else:
+                accel[0] = int(accel[0]/abs(accel[0])*(abs(accel[0])-2))
+            if abs(accel[1]) < 1:
+                accel[1] = 0
+            else:
+                accel[1] = int(accel[1]/abs(accel[1])*(abs(accel[1])-2))
+            self.controlled['exhaust'] -= 1
         
+        #   NORMAL PROSSESS
         if (-1)*self.b_stat.max_speed <= self.speed[0] + accel[0] and self.speed[0] + accel[0] <= self.b_stat.max_speed:
             self.speed[0] += accel[0]
         elif self.speed[0] + accel[0] > self.b_stat.max_speed and self.speed[0] < self.b_stat.max_speed:
@@ -113,10 +155,20 @@ class player(character):
         self.speed[1] += envi.gravity[1]
         
         # EXTERNAL ACCELERATION
-        self.speed[0] += self.acc_ext[0]
-        self.speed[1] += self.acc_ext[1]
+        for a in self.acc_ext:
+            self.speed[0] += a[0][0]
+            self.speed[1] += a[0][1]
+            a[1] -= 1
+            if a[1] == 0:
+                self.acc_ext.remove(a)
+        
 
         # POSITION UPDATE
+        #   RESTRICTION DUE TO DISORDER
+        if self.controlled['rooted'] > 0:
+            self.speed = [0,0]
+            self.controlled['rooted'] -= 1
+        #   NORMAL PROCESS
         for i in range(numpy.abs(self.speed[0])):
             if self.speed[0] > 0:
                 self.pos[0] += 1
@@ -166,7 +218,20 @@ class player(character):
 
 
         #-- HARMS ------------------------------------------------------------------------------#
-        
+
+        # DISORDERS
+        if self.disorder_tick['poisoned'] > 0:
+            print(self.disorder_amount['poisoned'], attack.POISON)
+            self.damaged(attack.damage(self.disorder_amount['poisoned'], attack.POISON))
+            self.disorder_tick['poisoned'] -= 1
+        else:
+            self.disorder_amount['poisoned'] = 0
+        if self.disorder_tick['burning'] > 0:
+            self.damaged(attack.damage(self.disorder_amount['burning'], attack.FIRE))
+            self.disorder_tick['burning'] -= 1
+        else:
+            self.disorder_amount['burning'] = 0
+        # HARMS
         for h in self.harms:
             self.hp -= h.amount
             self.harms.remove(h)
@@ -177,8 +242,23 @@ class player(character):
         
     def render(self):
         #pygame.gfxdraw.rectangle(screen, self.poly, WHITE)
-        screen.blit(self.image, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1]))
-        
+        if self.controlled['airborne'] == 0:
+            screen.blit(self.image, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1]))
+        else:
+            screen.blit(self.image, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1] - 15))
+
+        # DISORDER
+        if self.controlled['stunned'] > 0:
+            screen.blit(img_stunned, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1] - 10))
+        if self.controlled['exhaust'] > 0:
+            screen.blit(img_exhaust, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1] - 10))
+        if self.controlled['airborne'] > 0:
+            pygame.gfxdraw.filled_ellipse(screen, int(self.pos[0]+camera_offset[0]+self.ph_stat.width/2), int(self.pos[1]+camera_offset[1]+self.ph_stat.height-5), 10, 5, (0,0,0,127))
+        if self.disorder_tick['poisoned'] > 0:
+            screen.blit(img_poisoned, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1] - 10))
+        if self.disorder_tick['burning'] > 0:
+            screen.blit(img_burning, (self.pos[0] + camera_offset[0], self.pos[1] + camera_offset[1] - 10))
+
         # FOOTPRINT: NOT SO COOL, SO NOT USING
         #if self.footprint_tick == 0:
         #    effect.spark_gravity_rectangle((self.pos[0]+self.ph_stat.width/2, self.pos[1]+self.ph_stat.height*2/3), self.footprint_delay*2, (0,1), 3, 5, WHITE, 5)

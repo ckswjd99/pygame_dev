@@ -117,7 +117,8 @@ def board(parent_map, map_array):
     for i in range(len(map_array)):
         for j in range(len(map_array[i])):
             if map_array[i][j] == "g":
-                result.append( wall(parent_map, (i,j)) )
+                result.append( wall(parent_map, (j,i)) )
+                
     return result
 
 
