@@ -14,7 +14,6 @@
 ##  
 ##################################################################################################
 
-
 from setting import *
 import sys
 
@@ -24,13 +23,12 @@ class runner:
     def __init__(self, player, map_first):
         self.player = player
         self.map_now = map_first
-    
-    def run(self):
-
         self.done = False
 
         self.player.set_map(self.map_now)
         self.map_now.start(self, self.player, self.map_now.spawn_list['start'])
+    
+    def run(self):
 
         while not self.done:
 
@@ -48,31 +46,14 @@ class runner:
         
         # END GAME
         pygame.quit()
-        sys.exit()
+        #quit()
 
     def map_change(self, map_new, pos_new):
-        transition_tick = 20
-
-        for i in range(transition_tick):
-            clock.tick(FPS)
-            self.map_now.effect_screen.fill(BLACK)
-            pygame.draw.circle(self.map_now.effect_screen, (60,60,60), (100,100), 1200 - int(1200/transition_tick*i), 0)
-            self.map_now.effect_screen.set_colorkey((60,60,60))
-            screen.blit(self.map_now.effect_screen, (0,0))
-            pygame.display.flip()
-        
         self.map_now = map_new
+        print(self.player.pos, "<<")
         self.player.set_map(map_new)
         self.map_now.start(self, self.player, pos_new)
-        
-        for i in range(transition_tick):
-            print("IH")
-            clock.tick(FPS)
-            self.map_now.effect_screen.fill(BLACK)
-            pygame.draw.circle(self.map_now.effect_screen, (60,60,60), (100,100), int(1200/transition_tick*i), 0)
-            self.map_now.effect_screen.set_colorkey((60,60,60))
-            screen.blit(self.map_now.effect_screen, (0,0))
-            pygame.display.flip()
+
 
 
 

@@ -45,6 +45,8 @@ class character:
         self.ph_stat = ph_stat
         self.harms = []
 
+        self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
+
         self.controlled = { # Value means ticks left
             'rooted': 0,
             'stunned': 0,
@@ -72,6 +74,7 @@ class character:
 
     def replace(self, pos):
         self.pos = list(pos)
+        self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
 
     def damaged(self, damage):  # Input: attack.damage
         self.harms.append(damage)
@@ -107,7 +110,6 @@ class player(character):
         self.map_now = mapping
     
     def update(self):
-
         #-- MOVEMENT ------------------------------------------------------------------------------#
 
         # SELF ACCELERATION
@@ -155,7 +157,7 @@ class player(character):
             self.speed[1] = self.b_stat.max_speed
         elif self.speed[1] + accel[1] < (-1)*self.b_stat.max_speed and self.speed[1] > (-1)*self.b_stat.max_speed:
             self.speed[1] = (-1)*self.b_stat.max_speed
-            
+        
         # GRAVITY
         self.speed[0] += envi.gravity[0]
         self.speed[1] += envi.gravity[1]

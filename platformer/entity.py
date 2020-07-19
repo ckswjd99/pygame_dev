@@ -82,6 +82,7 @@ class eventblock(block):
         if self.active == False:
             if self.condition == PLAYER_COLLIDE:
                 if self.poly.colliderect(self.map.player.poly):
+                    print("HI")
                     self.func()
                     self.active = True
             elif self.condition == CHARACTER_COLLIDE:
@@ -116,10 +117,13 @@ class portalblock(block):
         
         self.collision_character = False
         self.collision_ray = False
+
+        self.active = False
     
     def update(self):
-        if self.poly.colliderect(self.map.player.poly):
-            self.map.game_runner.map_change(self.to_map, self.to_pos)
+        if self.poly.colliderect(self.map.player.poly) and self.active == False:
+            self.map.move_map(self.to_map, self.to_pos)
+            self.active = True
 
     def render(self):
         screen.blit(self.image, (self.x + self.map.cam.offset[0], self.y + self.map.cam.offset[1]))

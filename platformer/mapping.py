@@ -43,6 +43,12 @@ import character
 import attack
 import camera
 
+#---------- CONSTANTS ----------#
+TRANSITION_NONE = 0
+TRANSITION_OPEN = 1
+TRANSITION_CLOSE = 2
+
+
 # MAP EXAMPLE
 map_temp = [
         ["g","g","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
@@ -89,9 +95,17 @@ class mapping:
         self.UI = UI.UI(self)
 
         self.effect_screen = pygame.Surface(size)
+        self.transition_delay = 20
+        self.transition_tick = 0
+        self.transition_type = TRANSITION_NONE
 
     def background_setting(self, image):
         self.image_background = image
+
+    def move_map(self, to_map, to_pos):
+        self.transition_type = TRANSITION_CLOSE
+        self.to_map = to_map
+        self.to_pos = to_pos
 
     def map_setting(self, block_array, spawn_list, char_array):
         self.blocks.extend(entity.board(self, block_array))
@@ -111,6 +125,7 @@ class mapping:
         self.cam.set_y_limit(-self.size_tiles[1]*entity.TILE_SIZE+size[1]-200, 200)
         self.cam.replace(-player.pos[0]+size[0]/2, -player.pos[1]+size[1]/2)
         self.player.set_map_now(self)
+        self.transition_type = TRANSITION_OPEN
     
     def update(self):
         # THINGS TO UPDATE:
@@ -158,6 +173,11 @@ class mapping:
         # UI UPDATE
         self.UI.update()
 
+        # MAP TRANSITION
+        if self.transition_type == TRANSITION_CLOSE and self.transition_tick == self.transition_delay:
+            self.player.replace((99999,99999))
+            self.game_runner.map_change(self.to_map, self.to_pos)
+
     def render(self):
         # THINGS TO RENDER:
         #   BACKGROUND
@@ -169,19 +189,40 @@ class mapping:
         # BACKGROUND RENDER
         screen.blit(self.image_background, (int(self.cam.offset[0]), int(self.cam.offset[1])))
 
-        # PLAYER RENDER
-        self.player.render()
-
         # BLOCKS RENDER
         for b in self.blocks:
             b.render()
-
+        
+        # PLAYER RENDER
+        self.player.render()
+        
         # EFFECTS RENDER
         for e in effect.whole:
             e.render()
 
         # UI RENDER
         self.UI.render()
+
+        # SCREEN EFFECT RENDER
+        #   TRANSITION OPEN
+        if self.transition_type == TRANSITION_OPEN:
+            self.effect_screen.fill(BLACK)
+            pygame.draw.circle(self.effect_screen, (60,60,60), (int(self.player.pos[0]+self.cam.offset[0]), int(self.player.pos[1]+self.cam.offset[1])), int(800/self.transition_delay*self.transition_tick), 0)
+            self.effect_screen.set_colorkey((60,60,60))
+            screen.blit(self.effect_screen, (0,0))
+            self.transition_tick += 1
+            if self.transition_tick == self.transition_delay:
+                self.transition_type = TRANSITION_NONE
+                self.transition_tick = 0
+        
+        #   TRANSITION CLOSE
+        if self.transition_type == TRANSITION_CLOSE:
+
+            self.effect_screen.fill(BLACK)
+            pygame.draw.circle(self.effect_screen, (60,60,60), (int(self.player.pos[0]+self.cam.offset[0]), int(self.player.pos[1]+self.cam.offset[1])), 800 - int(800/self.transition_delay*self.transition_tick), 0)
+            self.effect_screen.set_colorkey((60,60,60))
+            screen.blit(self.effect_screen, (0,0))
+            self.transition_tick += 1
 
 
 

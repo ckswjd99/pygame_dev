@@ -1,0 +1,544 @@
+[33mcommit 303501536612ba9109512dc229b622c816eed5c6[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: ckswjd99 <ckswjd99@snu.ac.kr>
+Date:   Sun Jul 19 11:28:22 2020 +0900
+
+    Portal Added
+
+[1mdiff --git a/platformer/__pycache__/UI.cpython-38.pyc b/platformer/__pycache__/UI.cpython-38.pyc[m
+[1mindex 48c8c89..63ae6e4 100644[m
+Binary files a/platformer/__pycache__/UI.cpython-38.pyc and b/platformer/__pycache__/UI.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/attack.cpython-38.pyc b/platformer/__pycache__/attack.cpython-38.pyc[m
+[1mindex b0e3dc9..87c7959 100644[m
+Binary files a/platformer/__pycache__/attack.cpython-38.pyc and b/platformer/__pycache__/attack.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/character.cpython-38.pyc b/platformer/__pycache__/character.cpython-38.pyc[m
+[1mindex be5ffa7..7c2865d 100644[m
+Binary files a/platformer/__pycache__/character.cpython-38.pyc and b/platformer/__pycache__/character.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/effect.cpython-38.pyc b/platformer/__pycache__/effect.cpython-38.pyc[m
+[1mindex 4277346..eedab66 100644[m
+Binary files a/platformer/__pycache__/effect.cpython-38.pyc and b/platformer/__pycache__/effect.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/entity.cpython-38.pyc b/platformer/__pycache__/entity.cpython-38.pyc[m
+[1mindex db28a97..a243d0e 100644[m
+Binary files a/platformer/__pycache__/entity.cpython-38.pyc and b/platformer/__pycache__/entity.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/environment.cpython-38.pyc b/platformer/__pycache__/environment.cpython-38.pyc[m
+[1mindex 36e3a9b..daab6d0 100644[m
+Binary files a/platformer/__pycache__/environment.cpython-38.pyc and b/platformer/__pycache__/environment.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/mapping.cpython-38.pyc b/platformer/__pycache__/mapping.cpython-38.pyc[m
+[1mindex 06a349c..b769549 100644[m
+Binary files a/platformer/__pycache__/mapping.cpython-38.pyc and b/platformer/__pycache__/mapping.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/particle.cpython-38.pyc b/platformer/__pycache__/particle.cpython-38.pyc[m
+[1mindex 68177f0..8a90977 100644[m
+Binary files a/platformer/__pycache__/particle.cpython-38.pyc and b/platformer/__pycache__/particle.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/poly.cpython-38.pyc b/platformer/__pycache__/poly.cpython-38.pyc[m
+[1mindex 9828698..675e69a 100644[m
+Binary files a/platformer/__pycache__/poly.cpython-38.pyc and b/platformer/__pycache__/poly.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/runner.cpython-38.pyc b/platformer/__pycache__/runner.cpython-38.pyc[m
+[1mindex c0153dc..9b4661b 100644[m
+Binary files a/platformer/__pycache__/runner.cpython-38.pyc and b/platformer/__pycache__/runner.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/runner_setting.cpython-38.pyc b/platformer/__pycache__/runner_setting.cpython-38.pyc[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4e17708[m
+Binary files /dev/null and b/platformer/__pycache__/runner_setting.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/setting.cpython-38.pyc b/platformer/__pycache__/setting.cpython-38.pyc[m
+[1mindex b3431df..ee07f62 100644[m
+Binary files a/platformer/__pycache__/setting.cpython-38.pyc and b/platformer/__pycache__/setting.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/topology.cpython-38.pyc b/platformer/__pycache__/topology.cpython-38.pyc[m
+[1mindex cdaa18c..856c333 100644[m
+Binary files a/platformer/__pycache__/topology.cpython-38.pyc and b/platformer/__pycache__/topology.cpython-38.pyc differ
+[1mdiff --git a/platformer/__pycache__/util.cpython-38.pyc b/platformer/__pycache__/util.cpython-38.pyc[m
+[1mindex 3ea66d6..1104e11 100644[m
+Binary files a/platformer/__pycache__/util.cpython-38.pyc and b/platformer/__pycache__/util.cpython-38.pyc differ
+[1mdiff --git a/platformer/character.py b/platformer/character.py[m
+[1mindex 93b0448..5f02ef4 100644[m
+[1m--- a/platformer/character.py[m
+[1m+++ b/platformer/character.py[m
+[36m@@ -1,7 +1,6 @@[m
+ from setting import *[m
+ import pygame, pygame.gfxdraw, numpy[m
+ import environment as envi[m
+[31m-import entity[m
+ import effect[m
+ import poly as polygon[m
+ from topology import *[m
+[36m@@ -77,6 +76,9 @@[m [mclass character:[m
+     def damaged(self, damage):  # Input: attack.damage[m
+         self.harms.append(damage)[m
+ [m
+[32m+[m[32m    def set_map(self, map):[m
+[32m+[m[32m        self.map = map[m
+[32m+[m
+     def set_acc(self, accel, tick):[m
+         self.acc_ext.append([accel, tick])[m
+ [m
+[36m@@ -183,7 +185,7 @@[m [mclass player(character):[m
+             # CHECK AVAILABILITY HERE[m
+             collide = False[m
+             for g in self.map_now.blocks:[m
+[31m-                if self.poly.colliderect(g.poly) == True:[m
+[32m+[m[32m                if self.poly.colliderect(g.poly) == True and g.collision_character == True:[m
+                     collide = True[m
+             if collide == True:[m
+                 if self.speed[0] > 0:[m
+[36m@@ -203,7 +205,7 @@[m [mclass player(character):[m
+             # CHECK AVAILABILITY HERE[m
+             collide = False[m
+             for g in self.map_now.blocks:[m
+[31m-                if self.poly.colliderect(g.poly) == True:[m
+[32m+[m[32m                if self.poly.colliderect(g.poly) == True and g.collision_character == True:[m
+                     collide = True[m
+             if collide == True:[m
+                 if self.speed[1] > 0:[m
+[36m@@ -246,21 +248,21 @@[m [mclass player(character):[m
+     def render(self):[m
+         #pygame.gfxdraw.rectangle(screen, self.poly, WHITE)[m
+         if self.controlled['airborne'] == 0:[m
+[31m-            screen.blit(self.image, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1]))[m
+[32m+[m[32m            screen.blit(self.image, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1]))[m
+         else:[m
+[31m-            screen.blit(self.image, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 15))[m
+[32m+[m[32m            screen.blit(self.image, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1] - 15))[m
+ [m
+         # DISORDER[m
+         if self.controlled['stunned'] > 0:[m
+[31m-            screen.blit(img_stunned, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))[m
+[32m+[m[32m            screen.blit(img_stunned, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1] - 10))[m
+         if self.controlled['exhaust'] > 0:[m
+[31m-            screen.blit(img_exhaust, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))[m
+[32m+[m[32m            screen.blit(img_exhaust, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1] - 10))[m
+         if self.controlled['airborne'] > 0:[m
+[31m-            pygame.gfxdraw.filled_ellipse(screen, int(self.pos[0]+cam.offset[0]+self.ph_stat.width/2), int(self.pos[1]+cam.offset[1]+self.ph_stat.height-5), 10, 5, (0,0,0,127))[m
+[32m+[m[32m            pygame.gfxdraw.filled_ellipse(screen, int(self.pos[0]+self.map.cam.offset[0]+self.ph_stat.width/2), int(self.pos[1]+self.map.cam.offset[1]+self.ph_stat.height-5), 10, 5, (0,0,0,127))[m
+         if self.disorder_tick['poisoned'] > 0:[m
+[31m-            screen.blit(img_poisoned, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))[m
+[32m+[m[32m            screen.blit(img_poisoned, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1] - 10))[m
+         if self.disorder_tick['burning'] > 0:[m
+[31m-            screen.blit(img_burning, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))[m
+[32m+[m[32m            screen.blit(img_burning, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1] - 10))[m
+ [m
+         # FOOTPRINT: NOT SO COOL, SO NOT USING[m
+         #if self.footprint_tick == 0:[m
+[36m@@ -273,63 +275,3 @@[m [mclass player(character):[m
+             [m
+             [m
+ #---------- TEST BENCH ----------#[m
+[31m-def render():[m
+[31m-    screen.fill(BLACK)[m
+[31m-    for c in whole:[m
+[31m-        c.render()[m
+[31m-    for g in entity.wall_whole:[m
+[31m-        g.render()[m
+[31m-[m
+[31m-def update():[m
+[31m-    for c in whole:[m
+[31m-        c.update()[m
+[31m-    [m
+[31m-    render()[m
+[31m-[m
+[31m-if __name__ == "__main__":[m
+[31m-    [m
+[31m-    player_bstat = basic_stat(acc=3, jump_power=10, max_speed=10, hp=100)[m
+[31m-    player_phstat = physics_stat(width=30, height=40, air_drag=0.2)[m
+[31m-    player = player("1P", (500,400), player_bstat, player_phstat)[m
+[31m-[m
+[31m-    entity.wall((2,2))[m
+[31m-    [m
+[31m-    clock = pygame.time.Clock()[m
+[31m-[m
+[31m-    done = False[m
+[31m-    [m
+[31m-    while not done:[m
+[31m-        [m
+[31m-        clock.tick(30)  # 게임의 화면 투사를 30Hz로 설정[m
+[31m-[m
+[31m-        # 이벤트 입력받기[m
+[31m-        for event in pygame.event.get():  # User did something[m
+[31m-            if event.type == pygame.QUIT:  # If user clicked close[m
+[31m-                done = True  # Flag that we are done so we exit this loop[m
+[31m-            if event.type == pygame.KEYDOWN:[m
+[31m-                if event.key == player.keyset['UP']:  # key 'w'[m
+[31m-                    player.keydown['UP'] = True[m
+[31m-                elif event.key == player.keyset['LEFT']:  # key 'a'[m
+[31m-                    player.keydown['LEFT'] = True[m
+[31m-                elif event.key == player.keyset['DOWN']:  # key 's'[m
+[31m-                    player.keydown['DOWN'] = True[m
+[31m-                elif event.key == player.keyset['RIGHT']:  # key 'd'[m
+[31m-                    player.keydown['RIGHT'] = True[m
+[31m-            if event.type == pygame.KEYUP:[m
+[31m-                if event.key == player.keyset['UP']:  # key 'w'[m
+[31m-                    player.keydown['UP'] = False[m
+[31m-                elif event.key == player.keyset['LEFT']:  # key 'a'[m
+[31m-                    player.keydown['LEFT'] = False[m
+[31m-                elif event.key == player.keyset['DOWN']:  # key 's'[m
+[31m-                    player.keydown['DOWN'] = False[m
+[31m-                elif event.key == player.keyset['RIGHT']:  # key 'd'[m
+[31m-                    player.keydown['RIGHT'] = False[m
+[31m-[m
+[31m-        update()  # call update funtion[m
+[31m-[m
+[31m-        pygame.display.flip()[m
+[31m-            [m
+[31m-            [m
+[31m-            [m
+[31m-            [m
+[31m-            [m
+\ No newline at end of file[m
+[1mdiff --git a/platformer/entity.py b/platformer/entity.py[m
+[1mindex faf60c3..ea2eb96 100644[m
+[1m--- a/platformer/entity.py[m
+[1m+++ b/platformer/entity.py[m
+[36m@@ -1,4 +1,5 @@[m
+ import pygame, numpy, poly[m
+[32m+[m[32mfrom setting import *[m
+ [m
+ TILE_SIZE = 25[m
+ [m
+[36m@@ -25,7 +26,7 @@[m [mclass block:[m
+ [m
+ [m
+ [m
+[31m-from setting import *[m
+[32m+[m
+ #---------- CHILDREN CLASS: WALL ----------#[m
+ class wall(block):[m
+     def __init__(self, parent_map, pos_tile):[m
+[36m@@ -41,7 +42,7 @@[m [mclass wall(block):[m
+ [m
+     def render(self):[m
+         #pygame.gfxdraw.rectangle(screen, self.poly, RED)[m
+[31m-        screen.blit(self.image, (self.x + cam.offset[0], self.y + cam.offset[1]))[m
+[32m+[m[32m        screen.blit(self.image, (self.x + self.map.cam.offset[0], self.y + self.map.cam.offset[1]))[m
+         #hitbox = pygame.Rect(self.x, self.y, self.width, self.height)[m
+         #pygame.gfxdraw.rectangle(screen, hitbox, RED)[m
+ [m
+[36m@@ -100,10 +101,29 @@[m [mclass eventblock(block):[m
+ [m
+     def render(self):[m
+         if self.active == False:[m
+[31m-            screen.blit(self.image_inactive, (self.x + cam.offset[0], self.y + cam.offset[1]))[m
+[32m+[m[32m            screen.blit(self.image_inactive, (self.x + self.map.cam.offset[0], self.y + self.map.cam.offset[1]))[m
+         else:[m
+[31m-            screen.blit(self.image_active, (self.x + cam.offset[0], self.y + cam.offset[1]))[m
+[32m+[m[32m            screen.blit(self.image_active, (self.x + self.map.cam.offset[0], self.y + self.map.cam.offset[1]))[m
+[32m+[m
+ [m
+[32m+[m[32m#---------- CHILDREN CLASS: PORTAL BLOCK ----------#[m
+[32m+[m[32mclass portalblock(block):[m
+[32m+[m[32m    def __init__(self, parent_map, pos_tile, to_map, to_pos):[m
+[32m+[m[32m        block.__init__(self, parent_map, pos_tile)[m
+[32m+[m[32m        self.to_map = to_map[m
+[32m+[m[32m        self.to_pos = to_pos[m
+[32m+[m[32m        self.image = pygame.image.load("img/block/portal.png")[m
+[32m+[m[41m        [m
+[32m+[m[32m        self.collision_character = False[m
+[32m+[m[32m        self.collision_ray = False[m
+[32m+[m[41m    [m
+[32m+[m[32m    def update(self):[m
+[32m+[m[32m        if self.poly.colliderect(self.map.player.poly):[m
+[32m+[m[32m            self.map.game_runner.map_change(self.to_map, self.to_pos)[m
+[32m+[m
+[32m+[m[32m    def render(self):[m
+[32m+[m[32m        screen.blit(self.image, (self.x + self.map.cam.offset[0], self.y + self.map.cam.offset[1]))[m
+[32m+[m[41m        [m
+         [m
+ [m
+ [m
+[1mdiff --git a/platformer/img/block/portal.png b/platformer/img/block/portal.png[m
+[1mnew file mode 100644[m
+[1mindex 0000000..ed1f937[m
+Binary files /dev/null and b/platformer/img/block/portal.png differ
+[1mdiff --git a/platformer/mapping.py b/platformer/mapping.py[m
+[1mindex 06b31d3..5d85bec 100644[m
+[1m--- a/platformer/mapping.py[m
+[1m+++ b/platformer/mapping.py[m
+[36m@@ -36,8 +36,7 @@[m [mmap_temp = [[m
+ [m
+ #---------- PRIMITIVE CLASS: MAP ----------#[m
+ class mapping:[m
+[31m-    def __init__(self, player, size_tiles):[m
+[31m-        self.player = player[m
+[32m+[m[32m    def __init__(self, size_tiles):[m
+         self.size_tiles = size_tiles[m
+         [m
+         self.blocks = [][m
+[36m@@ -64,11 +63,14 @@[m [mclass mapping:[m
+         for b in block:[m
+             self.blocks.append(b)[m
+ [m
+[31m-    def start(self, player, pos):[m
+[32m+[m[32m    def start(self, game_runner, player, pos):[m
+[32m+[m[32m        self.game_runner = game_runner[m
+[32m+[m[32m        self.player = player[m
+         self.player.replace(pos)[m
+[31m-        cam.set_x_limit(-self.size_tiles[0]*entity.TILE_SIZE+size[0]-200, 200)[m
+[31m-        cam.set_y_limit(-self.size_tiles[1]*entity.TILE_SIZE+size[1]-200, 200)[m
+[31m-        cam.replace(-player.pos[0]+size[0]/2, -player.pos[1]+size[1]/2)[m
+[32m+[m[32m        self.cam = camera(self.player)[m
+[32m+[m[32m        self.cam.set_x_limit(-self.size_tiles[0]*entity.TILE_SIZE+size[0]-200, 200)[m
+[32m+[m[32m        self.cam.set_y_limit(-self.size_tiles[1]*entity.TILE_SIZE+size[1]-200, 200)[m
+[32m+[m[32m        self.cam.replace(-player.pos[0]+size[0]/2, -player.pos[1]+size[1]/2)[m
+         self.player.set_map_now(self)[m
+     [m
+     def update(self):[m
+[36m@@ -82,23 +84,23 @@[m [mclass mapping:[m
+             if event.type == pygame.QUIT:  # If user clicked close[m
+                 done = True  # Flag that we are done so we exit this loop[m
+             if event.type == pygame.KEYDOWN:[m
+[31m-                if event.key == player.keyset['UP']:  # key 'w'[m
+[31m-                    player.keydown['UP'] = True[m
+[31m-                elif event.key == player.keyset['LEFT']:  # key 'a'[m
+[31m-                    player.keydown['LEFT'] = True[m
+[31m-                elif event.key == player.keyset['DOWN']:  # key 's'[m
+[31m-                    player.keydown['DOWN'] = True[m
+[31m-                elif event.key == player.keyset['RIGHT']:  # key 'd'[m
+[31m-                    player.keydown['RIGHT'] = True[m
+[32m+[m[32m                if event.key == self.player.keyset['UP']:  # key 'w'[m
+[32m+[m[32m                    self.player.keydown['UP'] = True[m
+[32m+[m[32m                elif event.key == self.player.keyset['LEFT']:  # key 'a'[m
+[32m+[m[32m                    self.player.keydown['LEFT'] = True[m
+[32m+[m[32m                elif event.key == self.player.keyset['DOWN']:  # key 's'[m
+[32m+[m[32m                    self.player.keydown['DOWN'] = True[m
+[32m+[m[32m                elif event.key == self.player.keyset['RIGHT']:  # key 'd'[m
+[32m+[m[32m                    self.player.keydown['RIGHT'] = True[m
+             if event.type == pygame.KEYUP:[m
+[31m-                if event.key == player.keyset['UP']:  # key 'w'[m
+[31m-                    player.keydown['UP'] = False[m
+[31m-                elif event.key == player.keyset['LEFT']:  # key 'a'[m
+[31m-                    player.keydown['LEFT'] = False[m
+[31m-                elif event.key == player.keyset['DOWN']:  # key 's'[m
+[31m-                    player.keydown['DOWN'] = False[m
+[31m-                elif event.key == player.keyset['RIGHT']:  # key 'd'[m
+[31m-                    player.keydown['RIGHT'] = False[m
+[32m+[m[32m                if event.key == self.player.keyset['UP']:  # key 'w'[m
+[32m+[m[32m                    self.player.keydown['UP'] = False[m
+[32m+[m[32m                elif event.key == self.player.keyset['LEFT']:  # key 'a'[m
+[32m+[m[32m                    self.player.keydown['LEFT'] = False[m
+[32m+[m[32m                elif event.key == self.player.keyset['DOWN']:  # key 's'[m
+[32m+[m[32m                    self.player.keydown['DOWN'] = False[m
+[32m+[m[32m                elif event.key == self.player.keyset['RIGHT']:  # key 'd'[m
+[32m+[m[32m                    self.player.keydown['RIGHT'] = False[m
+ [m
+         # PLAYER UPDATE[m
+         self.player.update()[m
+[36m@@ -108,7 +110,7 @@[m [mclass mapping:[m
+             e.update()[m
+ [m
+         # CAMERA MOVEMENT[m
+[31m-        cam.move(-(cam.offset[0]+player.pos[0]-size[0]/2)/5, -(cam.offset[1]+player.pos[1]-size[1]/2)/5 )[m
+[32m+[m[32m        self.cam.update()[m
+         [m
+         # BLOCKS UPDATE[m
+         for b in self.blocks:[m
+[36m@@ -126,7 +128,7 @@[m [mclass mapping:[m
+         #   UI[m
+ [m
+         # BACKGROUND RENDER[m
+[31m-        screen.blit(self.image_background, (int(cam.offset[0]), int(cam.offset[1])))[m
+[32m+[m[32m        screen.blit(self.image_background, (int(self.cam.offset[0]), int(self.cam.offset[1])))[m
+ [m
+         # BLOCKS RENDER[m
+         for b in self.blocks:[m
+[36m@@ -185,25 +187,3 @@[m [mif __name__ == "__main__":[m
+ [m
+ [m
+ [m
+[31m-#-- MAPS FOR USE ------------------------------------------------------------------------------#[m
+[31m-maps = {}[m
+[31m-[m
+[31m-# TEST MAP (test_map)[m
+[31m-test_map = mapping(player, (40, 24))[m
+[31m-test_map.map_setting(map_temp, {'start': (50,300)})[m
+[31m-test_map.background_setting(pygame.image.load("img/map/test_map_bg.png"))[m
+[31m-#test_map.start(player, test_map.spawn_list['start'])[m
+[31m-test_map.add_block( entity.eventblock(test_map, (5,5), entity.PLAYER_COLLIDE, lambda: test_map.player.harms.append(attack.damage(5, False))) )[m
+[31m-test_map.add_block( entity.eventblock(test_map, (10,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_acc((3,3), 10)) )[m
+[31m-test_map.add_block( entity.eventblock(test_map, (15,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_controlled('stunned', 30)) )[m
+[31m-test_map.add_block( entity.eventblock(test_map, (20,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_controlled('exhaust', 30)) )[m
+[31m-test_map.add_block( entity.eventblock(test_map, (25,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_controlled('airborne', 10)) )[m
+[31m-test_map.add_block( entity.eventblock(test_map, (30,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_disorder('poisoned', 30, 1)) )[m
+[31m-test_map.add_block( entity.eventblock(test_map, (35,5), entity.PLAYER_COLLIDE, lambda: temp.player.set_disorder('burning', 300, 0.1)) )[m
+[31m-maps['test_map'] = test_map[m
+[31m-[m
+[31m-# TEST MAP 2 (test_map2)[m
+[31m-test_map2 = mapping(player, (60,40))[m
+[31m-test_map2.map_setting([[]], {'start': (50,500)})[m
+[31m-test_map2.background_setting(pygame.image.load("img/map/test_map2_bg.png"))[m
+[31m-maps['test_map2'] = test_map2[m
+[1mdiff --git a/platformer/runner.py b/platformer/runner.py[m
+[1mindex e1c83e4..c718b4e 100644[m
+[1m--- a/platformer/runner.py[m
+[1m+++ b/platformer/runner.py[m
+[36m@@ -1,17 +1,18 @@[m
+ from setting import *[m
+[31m-import mapping[m
+ [m
+ class runner:[m
+[31m-    def __init__(self, player, start_map):[m
+[32m+[m[32m    def __init__(self, player, map_first):[m
+         self.player = player[m
+[31m-        self.map_now = start_map[m
+[32m+[m[32m        self.map_now = map_first[m
+     [m
+     def run(self):[m
+[32m+[m
+         clock = pygame.time.Clock()[m
+ [m
+         done = False[m
+ [m
+[31m-        self.map_now.start(self.player, self.map_now.spawn_list['start'])[m
+[32m+[m[32m        self.player.set_map(self.map_now)[m
+[32m+[m[32m        self.map_now.start(self, self.player, self.map_now.spawn_list['start'])[m
+ [m
+         while not done:[m
+ [m
+[36m@@ -27,7 +28,26 @@[m [mclass runner:[m
+ [m
+             pygame.display.flip()[m
+ [m
+[31m-game_run = runner(player, mapping.maps['test_map2'])[m
+[32m+[m[32m    def map_change(self, map_new, pos_new):[m
+[32m+[m[32m        self.map_now = map_new[m
+[32m+[m[32m        self.player.set_map(map_new)[m
+[32m+[m[32m        self.map_now.start(self, self.player, pos_new)[m
+[32m+[m
+[32m+[m[32mdef get_runner():[m
+[32m+[m[32m    return game_run[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32m#-- GENERATE PLAYER ------------------------------------------------------------------------------#[m
+[32m+[m[32mimport character as ch[m
+[32m+[m[32mplayer_bstat = ch.basic_stat(acc=3, jump_power=10, max_speed=10, max_hp=100, max_mp=100)[m
+[32m+[m[32mplayer_phstat = ch.physics_stat(width=20, height=20, air_drag=0.2)[m
+[32m+[m[32mplayer = ch.player("1P", (500,400), player_bstat, player_phstat)[m
+[32m+[m
+ [m
+ if __name__ == "__main__":[m
+[31m-    game_run.run()[m
+\ No newline at end of file[m
+[32m+[m[32m    from runner_setting import *[m
+[32m+[m[32m    game_run = runner(player, maps['test_map2'])[m
+[32m+[m[32m    game_run.run()[m
+[32m+[m[32m    game_run.map_change(maps['test_map2'], maps['test_map2'].spawn_list['start'])[m
+[41m+    [m
+\ No newline at end of file[m
+[1mdiff --git a/platformer/runner_setting.py b/platformer/runner_setting.py[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4450edd[m
+[1m--- /dev/null[m
+[1m+++ b/platformer/runner_setting.py[m
+[36m@@ -0,0 +1,28 @@[m
+[32m+[m[32mimport mapping[m
+[32m+[m[32mimport entity[m
+[32m+[m[32mimport attack[m
+[32m+[m[32mfrom runner import *[m
+[32m+[m
+[32m+[m[32m#-- MAPS FOR USE ------------------------------------------------------------------------------#[m
+[32m+[m[32mmaps = {}[m
+[32m+[m
+[32m+[m[32m# TEST MAP (test_map)[m
+[32m+[m[32mtest_map = mapping.mapping((40, 24))[m
+[32m+[m[32mtest_map.map_setting(mapping.map_temp, {'start': (50,300)})[m
+[32m+[m[32mtest_map.background_setting(pygame.image.load("img/map/test_map_bg.png"))[m
+[32m+[m[32m#test_map.start(player, test_map.spawn_list['start'])[m
+[32m+[m[32mtest_map.add_block( entity.eventblock(test_map, (5,5), entity.PLAYER_COLLIDE, lambda: test_map.player.harms.append(attack.damage(5, False))) )[m
+[32m+[m[32mtest_map.add_block( entity.eventblock(test_map, (10,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_acc((3,3), 10)) )[m
+[32m+[m[32mtest_map.add_block( entity.eventblock(test_map, (15,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_controlled('stunned', 30)) )[m
+[32m+[m[32mtest_map.add_block( entity.eventblock(test_map, (20,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_controlled('exhaust', 30)) )[m
+[32m+[m[32mtest_map.add_block( entity.eventblock(test_map, (25,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_controlled('airborne', 10)) )[m
+[32m+[m[32mtest_map.add_block( entity.eventblock(test_map, (30,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_disorder('poisoned', 30, 1)) )[m
+[32m+[m[32mtest_map.add_block( entity.eventblock(test_map, (35,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_disorder('burning', 300, 0.1)) )[m
+[32m+[m[32mmaps['test_map'] = test_map[m
+[32m+[m
+[32m+[m[32m# TEST MAP 2 (test_map2)[m
+[32m+[m[32mtest_map2 = mapping.mapping((30,20))[m
+[32m+[m[32mtest_map2.map_setting([], {'start': (450,250)})[m
+[32m+[m[32mtest_map2.background_setting(pygame.image.load("img/map/test_map2_bg.png"))[m
+[32m+[m[32mtest_map2.add_block( entity.portalblock(test_map2, (15,5), to_map=maps['test_map'], to_pos=maps['test_map'].spawn_list['start']) )[m
+[32m+[m[32mmaps['test_map2'] = test_map2[m
+[1mdiff --git a/platformer/setting.py b/platformer/setting.py[m
+[1mindex 2db0f4e..7a37b90 100644[m
+[1m--- a/platformer/setting.py[m
+[1m+++ b/platformer/setting.py[m
+[36m@@ -24,29 +24,35 @@[m [mpygame.display.set_caption("Hello Game")[m
+ [m
+ #-- CAMERA SETTING ------------------------------------------------------------------------------#[m
+ class camera:[m
+[31m-    def __init__(self):[m
+[32m+[m[32m    def __init__(self, focus):[m
+         self.offset = [0,0][m
+         self.x_limit = [0,0][m
+         self.y_limit = [0,0][m
+[32m+[m[32m        self.focus = focus[m
+     def replace(self, x, y):[m
+[31m-        if self.x_limit[0] < x and x < self.x_limit[1]:[m
+[31m-            self.offset[0] = x[m
+[31m-        if self.y_limit[0] < y and y < self.y_limit[1]:[m
+[31m-            self.offset[1] = y[m
+[32m+[m[32m        self.offset[0] = x[m
+[32m+[m[32m        self.offset[1] = y[m
+[32m+[m
+[32m+[m[32m        #if self.x_limit[0] < x and x < self.x_limit[1]:[m
+[32m+[m[32m        #    self.offset[0] = x[m
+[32m+[m[32m        #if self.y_limit[0] < y and y < self.y_limit[1]:[m
+[32m+[m[32m        #    self.offset[1] = y[m
+     def move(self, x, y):[m
+[31m-        if self.x_limit[0] < self.offset[0]+x and self.offset[0]+x < self.x_limit[1]:[m
+[31m-            self.offset[0] += x[m
+[31m-        elif self.x_limit[0] > self.offset[0]+x:[m
+[31m-            self.offset[0] = self.x_limit[0][m
+[31m-        elif self.x_limit[1] < self.offset[0]+x:[m
+[31m-            self.offset[0] = self.x_limit[1][m
+[32m+[m[32m        self.offset[0] += x[m
+[32m+[m[32m        self.offset[1] += y[m
+[32m+[m[32m        #if self.x_limit[0] < self.offset[0]+x and self.offset[0]+x < self.x_limit[1]:[m
+[32m+[m[32m        #    self.offset[0] += x[m
+[32m+[m[32m        #elif self.x_limit[0] > self.offset[0]+x:[m
+[32m+[m[32m        #    self.offset[0] = self.x_limit[0][m
+[32m+[m[32m        #elif self.x_limit[1] < self.offset[0]+x:[m
+[32m+[m[32m        #    self.offset[0] = self.x_limit[1][m
+ [m
+[31m-        if self.y_limit[0] < self.offset[1]+y and self.offset[1]+y < self.y_limit[1]:[m
+[31m-            self.offset[1] += y[m
+[31m-        elif self.y_limit[0] > self.offset[1]+y:[m
+[31m-            self.offset[1] = self.y_limit[0][m
+[31m-        elif self.y_limit[1] < self.offset[1]+y:[m
+[31m-            self.offset[1] = self.y_limit[1][m
+[32m+[m[32m        #if self.y_limit[0] < self.offset[1]+y and self.offset[1]+y < self.y_limit[1]:[m
+[32m+[m[32m        #    self.offset[1] += y[m
+[32m+[m[32m        #elif self.y_limit[0] > self.offset[1]+y:[m
+[32m+[m[32m        #    self.offset[1] = self.y_limit[0][m
+[32m+[m[32m        #elif self.y_limit[1] < self.offset[1]+y:[m
+[32m+[m[32m        #    self.offset[1] = self.y_limit[1][m
+ [m
+     def set_x_limit(self, x1, x2):[m
+         self.x_limit[0] = x1[m
+[36m@@ -55,13 +61,20 @@[m [mclass camera:[m
+         self.y_limit[0] = y1[m
+         self.y_limit[1] = y2[m
+ [m
+[31m-cam = camera()[m
+[31m-[m
+[31m-#-- GENERATE PLAYER ------------------------------------------------------------------------------#[m
+[31m-import character as ch[m
+[31m-player_bstat = ch.basic_stat(acc=3, jump_power=10, max_speed=10, max_hp=100, max_mp=100)[m
+[31m-player_phstat = ch.physics_stat(width=20, height=20, air_drag=0.2)[m
+[31m-player = ch.player("1P", (500,400), player_bstat, player_phstat)[m
+[32m+[m[32m    def set_focus(self, focus):[m
+[32m+[m[32m        self.focus = focus[m
+ [m
+[31m-#-- GENERATE PLAYER ------------------------------------------------------------------------------#[m
+[31m-game_run = False[m
+\ No newline at end of file[m
+[32m+[m[32m    def update(self):[m
+[32m+[m[32m        # FOCUS ON FOCUS[m
+[32m+[m[32m        focus_smoothe = 5[m
+[32m+[m[32m        self.move(-(self.offset[0]+self.focus.pos[0]-size[0]/2)/focus_smoothe, -(self.offset[1]+self.focus.pos[1]-size[1]/2)/focus_smoothe )[m
+[32m+[m[32m        # LIMITS[m
+[32m+[m[32m        limit_smoothe = 3[m
+[32m+[m[32m        if self.offset[0] < self.x_limit[0]:[m
+[32m+[m[32m            self.move( (self.x_limit[0]-self.offset[0])/limit_smoothe, 0 )[m
+[32m+[m[32m        if self.offset[0] > self.x_limit[1]:[m
+[32m+[m[32m            self.move( (self.x_limit[1]-self.offset[0])/limit_smoothe, 0 )[m
+[32m+[m[32m        if self.offset[1] < self.y_limit[0]:[m
+[32m+[m[32m            self.move( 0, (self.y_limit[0]-self.offset[1])/limit_smoothe )[m
+[32m+[m[32m        if self.offset[1] > self.y_limit[1]:[m
+[32m+[m[32m            self.move( 0, (self.y_limit[1]-self.offset[1])/limit_smoothe )[m
