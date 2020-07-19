@@ -1,3 +1,11 @@
+############################## README ############################################################
+##  This file generates objects in use.
+## 
+##  This file generates maps.
+##  Every maps generated are stored in dictionary type 'maps'.
+##  
+##################################################################################################
+
 import mapping
 import entity
 import attack
@@ -8,7 +16,7 @@ maps = {}
 
 # TEST MAP (test_map)
 test_map = mapping.mapping((40, 24))
-test_map.map_setting(mapping.map_temp, {'start': (50,300)})
+test_map.map_setting(mapping.map_temp, {'start': (50,300)}, [])
 test_map.background_setting(pygame.image.load("img/map/test_map_bg.png"))
 #test_map.start(player, test_map.spawn_list['start'])
 test_map.add_block( entity.eventblock(test_map, (5,5), entity.PLAYER_COLLIDE, lambda: test_map.player.harms.append(attack.damage(5, False))) )
@@ -22,7 +30,7 @@ maps['test_map'] = test_map
 
 # TEST MAP 2 (test_map2)
 test_map2 = mapping.mapping((30,20))
-test_map2.map_setting([], {'start': (450,250)})
+test_map2.map_setting([], {'start': (450,250)}, [])
 test_map2.background_setting(pygame.image.load("img/map/test_map2_bg.png"))
 test_map2.add_block( entity.portalblock(test_map2, (15,5), to_map=maps['test_map'], to_pos=maps['test_map'].spawn_list['start']) )
 maps['test_map2'] = test_map2

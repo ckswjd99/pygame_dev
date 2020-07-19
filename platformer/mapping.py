@@ -1,3 +1,39 @@
+############################## README ############################################################
+##  This file defines class 'mapping'. 
+##  It was originally 'map' but changed to 'mapping' to avoid crash with Python basic function.
+## 
+##  mapping class manages core attributes for ovrall gameplay.
+##  
+##  mapping class contains following attributes:
+##      > size_tiles            : defined & assigned in __init__.
+##      > blocks                : defined in __init__, assigned in map_setting, add_block
+##      > characters            : defined in __init__, assigned in map_setting.
+##      > UI                    : defined & assigned in __init__.
+##      > effect_screen         : defined & assigned in __init__. 
+##      > image_background      : defined & assigned in background_setting.
+##      > spawn_list            : defined & assigned in map_setting. list of preset spawn positions.
+##      > game_runner           : defined & assigned in start. main loop manger.
+##      > player                : defined & assigned in start. player object.
+##      > cam                   : defined & assigned in start. cam object.
+##  
+##  and following functions:
+##      > __init__(self, size_tiles)        : init function. only gets number of tiles in row, col.
+##      > background_setting(self, image)   : set background image.
+##      > map_setting(self, block_array, spawn_list, char_array)
+##              : ESSENTIAL. sets attribute blocks, spawn_list, characters.
+##      > add_block(self, *block)           : gets array of blocks, append to blocks.
+##      > start(self, game_runner, player, pos)
+##              : ESSENTIAL. pass game_runner, player and its position.
+##      > update(self)                      : updates event, player, effect, camera, blocks, UI
+##      > render(self)                      : renders background, block, effect, player, UI
+##  
+##  In order to make one map, you should run these functions:
+##      > __init__, background_setting, map_setting
+##  
+##  And when you call runner.map_change, then mapping.start will called automatically.
+##  
+##################################################################################################
+
 from setting import *
 import pygame
 import entity
@@ -5,6 +41,7 @@ import effect
 import UI
 import character
 import attack
+import camera
 
 # MAP EXAMPLE
 map_temp = [
@@ -46,18 +83,20 @@ class mapping:
         for i in range(size_tiles[1]):
             self.blocks.append( entity.invisible_wall(self, (-1,i)) )
             self.blocks.append( entity.invisible_wall(self, (size_tiles[0],i)) )
-        print(size_tiles, len(self.blocks))
 
         self.characters = []
 
         self.UI = UI.UI(self)
 
+        self.effect_screen = pygame.Surface(size)
+
     def background_setting(self, image):
         self.image_background = image
 
-    def map_setting(self, block_array, spawn_list):
+    def map_setting(self, block_array, spawn_list, char_array):
         self.blocks.extend(entity.board(self, block_array))
         self.spawn_list = spawn_list
+        self.characters.extend(char_array)
 
     def add_block(self, *block):
         for b in block:
@@ -67,7 +106,7 @@ class mapping:
         self.game_runner = game_runner
         self.player = player
         self.player.replace(pos)
-        self.cam = camera(self.player)
+        self.cam = camera.camera(self.player)
         self.cam.set_x_limit(-self.size_tiles[0]*entity.TILE_SIZE+size[0]-200, 200)
         self.cam.set_y_limit(-self.size_tiles[1]*entity.TILE_SIZE+size[1]-200, 200)
         self.cam.replace(-player.pos[0]+size[0]/2, -player.pos[1]+size[1]/2)
@@ -82,7 +121,7 @@ class mapping:
         # EVENT MANIPULATION
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
-                done = True  # Flag that we are done so we exit this loop
+                self.game_runner.done = True  # Flag that we are done so we exit loop
             if event.type == pygame.KEYDOWN:
                 if event.key == self.player.keyset['UP']:  # key 'w'
                     self.player.keydown['UP'] = True
@@ -130,6 +169,9 @@ class mapping:
         # BACKGROUND RENDER
         screen.blit(self.image_background, (int(self.cam.offset[0]), int(self.cam.offset[1])))
 
+        # PLAYER RENDER
+        self.player.render()
+
         # BLOCKS RENDER
         for b in self.blocks:
             b.render()
@@ -138,12 +180,8 @@ class mapping:
         for e in effect.whole:
             e.render()
 
-        # PLAYER RENDER
-        self.player.render()
-
         # UI RENDER
         self.UI.render()
-        
 
 
 

@@ -7,7 +7,7 @@ from numpy import cos, sin, pi
 
 class particle:
     def __init__(self, eff, pos, life):
-        self.eff = eff;
+        self.eff = eff
         self.eff.particles.append(self)
         self.pos = pos
         self.life = life
