@@ -36,8 +36,7 @@ map_temp = [
 
 #---------- PRIMITIVE CLASS: MAP ----------#
 class mapping:
-    def __init__(self, player, size_tiles):
-        self.player = player
+    def __init__(self, size_tiles):
         self.size_tiles = size_tiles
         
         self.blocks = []
@@ -64,11 +63,14 @@ class mapping:
         for b in block:
             self.blocks.append(b)
 
-    def start(self, player, pos):
+    def start(self, game_runner, player, pos):
+        self.game_runner = game_runner
+        self.player = player
         self.player.replace(pos)
-        cam.set_x_limit(-self.size_tiles[0]*entity.TILE_SIZE+size[0]-200, 200)
-        cam.set_y_limit(-self.size_tiles[1]*entity.TILE_SIZE+size[1]-200, 200)
-        cam.replace(-player.pos[0]+size[0]/2, -player.pos[1]+size[1]/2)
+        self.cam = camera(self.player)
+        self.cam.set_x_limit(-self.size_tiles[0]*entity.TILE_SIZE+size[0]-200, 200)
+        self.cam.set_y_limit(-self.size_tiles[1]*entity.TILE_SIZE+size[1]-200, 200)
+        self.cam.replace(-player.pos[0]+size[0]/2, -player.pos[1]+size[1]/2)
         self.player.set_map_now(self)
     
     def update(self):
@@ -82,23 +84,23 @@ class mapping:
             if event.type == pygame.QUIT:  # If user clicked close
                 done = True  # Flag that we are done so we exit this loop
             if event.type == pygame.KEYDOWN:
-                if event.key == player.keyset['UP']:  # key 'w'
-                    player.keydown['UP'] = True
-                elif event.key == player.keyset['LEFT']:  # key 'a'
-                    player.keydown['LEFT'] = True
-                elif event.key == player.keyset['DOWN']:  # key 's'
-                    player.keydown['DOWN'] = True
-                elif event.key == player.keyset['RIGHT']:  # key 'd'
-                    player.keydown['RIGHT'] = True
+                if event.key == self.player.keyset['UP']:  # key 'w'
+                    self.player.keydown['UP'] = True
+                elif event.key == self.player.keyset['LEFT']:  # key 'a'
+                    self.player.keydown['LEFT'] = True
+                elif event.key == self.player.keyset['DOWN']:  # key 's'
+                    self.player.keydown['DOWN'] = True
+                elif event.key == self.player.keyset['RIGHT']:  # key 'd'
+                    self.player.keydown['RIGHT'] = True
             if event.type == pygame.KEYUP:
-                if event.key == player.keyset['UP']:  # key 'w'
-                    player.keydown['UP'] = False
-                elif event.key == player.keyset['LEFT']:  # key 'a'
-                    player.keydown['LEFT'] = False
-                elif event.key == player.keyset['DOWN']:  # key 's'
-                    player.keydown['DOWN'] = False
-                elif event.key == player.keyset['RIGHT']:  # key 'd'
-                    player.keydown['RIGHT'] = False
+                if event.key == self.player.keyset['UP']:  # key 'w'
+                    self.player.keydown['UP'] = False
+                elif event.key == self.player.keyset['LEFT']:  # key 'a'
+                    self.player.keydown['LEFT'] = False
+                elif event.key == self.player.keyset['DOWN']:  # key 's'
+                    self.player.keydown['DOWN'] = False
+                elif event.key == self.player.keyset['RIGHT']:  # key 'd'
+                    self.player.keydown['RIGHT'] = False
 
         # PLAYER UPDATE
         self.player.update()
@@ -108,7 +110,7 @@ class mapping:
             e.update()
 
         # CAMERA MOVEMENT
-        cam.move(-(cam.offset[0]+player.pos[0]-size[0]/2)/5, -(cam.offset[1]+player.pos[1]-size[1]/2)/5 )
+        self.cam.update()
         
         # BLOCKS UPDATE
         for b in self.blocks:
@@ -126,7 +128,7 @@ class mapping:
         #   UI
 
         # BACKGROUND RENDER
-        screen.blit(self.image_background, (int(cam.offset[0]), int(cam.offset[1])))
+        screen.blit(self.image_background, (int(self.cam.offset[0]), int(self.cam.offset[1])))
 
         # BLOCKS RENDER
         for b in self.blocks:
@@ -185,25 +187,3 @@ if __name__ == "__main__":
 
 
 
-#-- MAPS FOR USE ------------------------------------------------------------------------------#
-maps = {}
-
-# TEST MAP (test_map)
-test_map = mapping(player, (40, 24))
-test_map.map_setting(map_temp, {'start': (50,300)})
-test_map.background_setting(pygame.image.load("img/map/test_map_bg.png"))
-#test_map.start(player, test_map.spawn_list['start'])
-test_map.add_block( entity.eventblock(test_map, (5,5), entity.PLAYER_COLLIDE, lambda: test_map.player.harms.append(attack.damage(5, False))) )
-test_map.add_block( entity.eventblock(test_map, (10,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_acc((3,3), 10)) )
-test_map.add_block( entity.eventblock(test_map, (15,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_controlled('stunned', 30)) )
-test_map.add_block( entity.eventblock(test_map, (20,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_controlled('exhaust', 30)) )
-test_map.add_block( entity.eventblock(test_map, (25,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_controlled('airborne', 10)) )
-test_map.add_block( entity.eventblock(test_map, (30,5), entity.PLAYER_COLLIDE, lambda: test_map.player.set_disorder('poisoned', 30, 1)) )
-test_map.add_block( entity.eventblock(test_map, (35,5), entity.PLAYER_COLLIDE, lambda: temp.player.set_disorder('burning', 300, 0.1)) )
-maps['test_map'] = test_map
-
-# TEST MAP 2 (test_map2)
-test_map2 = mapping(player, (60,40))
-test_map2.map_setting([[]], {'start': (50,500)})
-test_map2.background_setting(pygame.image.load("img/map/test_map2_bg.png"))
-maps['test_map2'] = test_map2

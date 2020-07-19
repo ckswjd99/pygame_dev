@@ -24,29 +24,35 @@ pygame.display.set_caption("Hello Game")
 
 #-- CAMERA SETTING ------------------------------------------------------------------------------#
 class camera:
-    def __init__(self):
+    def __init__(self, focus):
         self.offset = [0,0]
         self.x_limit = [0,0]
         self.y_limit = [0,0]
+        self.focus = focus
     def replace(self, x, y):
-        if self.x_limit[0] < x and x < self.x_limit[1]:
-            self.offset[0] = x
-        if self.y_limit[0] < y and y < self.y_limit[1]:
-            self.offset[1] = y
-    def move(self, x, y):
-        if self.x_limit[0] < self.offset[0]+x and self.offset[0]+x < self.x_limit[1]:
-            self.offset[0] += x
-        elif self.x_limit[0] > self.offset[0]+x:
-            self.offset[0] = self.x_limit[0]
-        elif self.x_limit[1] < self.offset[0]+x:
-            self.offset[0] = self.x_limit[1]
+        self.offset[0] = x
+        self.offset[1] = y
 
-        if self.y_limit[0] < self.offset[1]+y and self.offset[1]+y < self.y_limit[1]:
-            self.offset[1] += y
-        elif self.y_limit[0] > self.offset[1]+y:
-            self.offset[1] = self.y_limit[0]
-        elif self.y_limit[1] < self.offset[1]+y:
-            self.offset[1] = self.y_limit[1]
+        #if self.x_limit[0] < x and x < self.x_limit[1]:
+        #    self.offset[0] = x
+        #if self.y_limit[0] < y and y < self.y_limit[1]:
+        #    self.offset[1] = y
+    def move(self, x, y):
+        self.offset[0] += x
+        self.offset[1] += y
+        #if self.x_limit[0] < self.offset[0]+x and self.offset[0]+x < self.x_limit[1]:
+        #    self.offset[0] += x
+        #elif self.x_limit[0] > self.offset[0]+x:
+        #    self.offset[0] = self.x_limit[0]
+        #elif self.x_limit[1] < self.offset[0]+x:
+        #    self.offset[0] = self.x_limit[1]
+
+        #if self.y_limit[0] < self.offset[1]+y and self.offset[1]+y < self.y_limit[1]:
+        #    self.offset[1] += y
+        #elif self.y_limit[0] > self.offset[1]+y:
+        #    self.offset[1] = self.y_limit[0]
+        #elif self.y_limit[1] < self.offset[1]+y:
+        #    self.offset[1] = self.y_limit[1]
 
     def set_x_limit(self, x1, x2):
         self.x_limit[0] = x1
@@ -55,13 +61,20 @@ class camera:
         self.y_limit[0] = y1
         self.y_limit[1] = y2
 
-cam = camera()
+    def set_focus(self, focus):
+        self.focus = focus
 
-#-- GENERATE PLAYER ------------------------------------------------------------------------------#
-import character as ch
-player_bstat = ch.basic_stat(acc=3, jump_power=10, max_speed=10, max_hp=100, max_mp=100)
-player_phstat = ch.physics_stat(width=20, height=20, air_drag=0.2)
-player = ch.player("1P", (500,400), player_bstat, player_phstat)
-
-#-- GENERATE PLAYER ------------------------------------------------------------------------------#
-game_run = False
+    def update(self):
+        # FOCUS ON FOCUS
+        focus_smoothe = 5
+        self.move(-(self.offset[0]+self.focus.pos[0]-size[0]/2)/focus_smoothe, -(self.offset[1]+self.focus.pos[1]-size[1]/2)/focus_smoothe )
+        # LIMITS
+        limit_smoothe = 3
+        if self.offset[0] < self.x_limit[0]:
+            self.move( (self.x_limit[0]-self.offset[0])/limit_smoothe, 0 )
+        if self.offset[0] > self.x_limit[1]:
+            self.move( (self.x_limit[1]-self.offset[0])/limit_smoothe, 0 )
+        if self.offset[1] < self.y_limit[0]:
+            self.move( 0, (self.y_limit[0]-self.offset[1])/limit_smoothe )
+        if self.offset[1] > self.y_limit[1]:
+            self.move( 0, (self.y_limit[1]-self.offset[1])/limit_smoothe )

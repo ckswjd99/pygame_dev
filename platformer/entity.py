@@ -1,4 +1,5 @@
 import pygame, numpy, poly
+from setting import *
 
 TILE_SIZE = 25
 
@@ -25,7 +26,7 @@ class block:
 
 
 
-from setting import *
+
 #---------- CHILDREN CLASS: WALL ----------#
 class wall(block):
     def __init__(self, parent_map, pos_tile):
@@ -41,7 +42,7 @@ class wall(block):
 
     def render(self):
         #pygame.gfxdraw.rectangle(screen, self.poly, RED)
-        screen.blit(self.image, (self.x + cam.offset[0], self.y + cam.offset[1]))
+        screen.blit(self.image, (self.x + self.map.cam.offset[0], self.y + self.map.cam.offset[1]))
         #hitbox = pygame.Rect(self.x, self.y, self.width, self.height)
         #pygame.gfxdraw.rectangle(screen, hitbox, RED)
 
@@ -100,10 +101,29 @@ class eventblock(block):
 
     def render(self):
         if self.active == False:
-            screen.blit(self.image_inactive, (self.x + cam.offset[0], self.y + cam.offset[1]))
+            screen.blit(self.image_inactive, (self.x + self.map.cam.offset[0], self.y + self.map.cam.offset[1]))
         else:
-            screen.blit(self.image_active, (self.x + cam.offset[0], self.y + cam.offset[1]))
+            screen.blit(self.image_active, (self.x + self.map.cam.offset[0], self.y + self.map.cam.offset[1]))
 
+
+#---------- CHILDREN CLASS: PORTAL BLOCK ----------#
+class portalblock(block):
+    def __init__(self, parent_map, pos_tile, to_map, to_pos):
+        block.__init__(self, parent_map, pos_tile)
+        self.to_map = to_map
+        self.to_pos = to_pos
+        self.image = pygame.image.load("img/block/portal.png")
+        
+        self.collision_character = False
+        self.collision_ray = False
+    
+    def update(self):
+        if self.poly.colliderect(self.map.player.poly):
+            self.map.game_runner.map_change(self.to_map, self.to_pos)
+
+    def render(self):
+        screen.blit(self.image, (self.x + self.map.cam.offset[0], self.y + self.map.cam.offset[1]))
+        
         
 
 

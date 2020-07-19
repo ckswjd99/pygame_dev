@@ -1,7 +1,6 @@
 from setting import *
 import pygame, pygame.gfxdraw, numpy
 import environment as envi
-import entity
 import effect
 import poly as polygon
 from topology import *
@@ -76,6 +75,9 @@ class character:
 
     def damaged(self, damage):  # Input: attack.damage
         self.harms.append(damage)
+
+    def set_map(self, map):
+        self.map = map
 
     def set_acc(self, accel, tick):
         self.acc_ext.append([accel, tick])
@@ -183,7 +185,7 @@ class player(character):
             # CHECK AVAILABILITY HERE
             collide = False
             for g in self.map_now.blocks:
-                if self.poly.colliderect(g.poly) == True:
+                if self.poly.colliderect(g.poly) == True and g.collision_character == True:
                     collide = True
             if collide == True:
                 if self.speed[0] > 0:
@@ -203,7 +205,7 @@ class player(character):
             # CHECK AVAILABILITY HERE
             collide = False
             for g in self.map_now.blocks:
-                if self.poly.colliderect(g.poly) == True:
+                if self.poly.colliderect(g.poly) == True and g.collision_character == True:
                     collide = True
             if collide == True:
                 if self.speed[1] > 0:
@@ -246,21 +248,21 @@ class player(character):
     def render(self):
         #pygame.gfxdraw.rectangle(screen, self.poly, WHITE)
         if self.controlled['airborne'] == 0:
-            screen.blit(self.image, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1]))
+            screen.blit(self.image, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1]))
         else:
-            screen.blit(self.image, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 15))
+            screen.blit(self.image, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1] - 15))
 
         # DISORDER
         if self.controlled['stunned'] > 0:
-            screen.blit(img_stunned, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))
+            screen.blit(img_stunned, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1] - 10))
         if self.controlled['exhaust'] > 0:
-            screen.blit(img_exhaust, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))
+            screen.blit(img_exhaust, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1] - 10))
         if self.controlled['airborne'] > 0:
-            pygame.gfxdraw.filled_ellipse(screen, int(self.pos[0]+cam.offset[0]+self.ph_stat.width/2), int(self.pos[1]+cam.offset[1]+self.ph_stat.height-5), 10, 5, (0,0,0,127))
+            pygame.gfxdraw.filled_ellipse(screen, int(self.pos[0]+self.map.cam.offset[0]+self.ph_stat.width/2), int(self.pos[1]+self.map.cam.offset[1]+self.ph_stat.height-5), 10, 5, (0,0,0,127))
         if self.disorder_tick['poisoned'] > 0:
-            screen.blit(img_poisoned, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))
+            screen.blit(img_poisoned, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1] - 10))
         if self.disorder_tick['burning'] > 0:
-            screen.blit(img_burning, (self.pos[0] + cam.offset[0], self.pos[1] + cam.offset[1] - 10))
+            screen.blit(img_burning, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1] - 10))
 
         # FOOTPRINT: NOT SO COOL, SO NOT USING
         #if self.footprint_tick == 0:
@@ -273,63 +275,3 @@ class player(character):
             
             
 #---------- TEST BENCH ----------#
-def render():
-    screen.fill(BLACK)
-    for c in whole:
-        c.render()
-    for g in entity.wall_whole:
-        g.render()
-
-def update():
-    for c in whole:
-        c.update()
-    
-    render()
-
-if __name__ == "__main__":
-    
-    player_bstat = basic_stat(acc=3, jump_power=10, max_speed=10, hp=100)
-    player_phstat = physics_stat(width=30, height=40, air_drag=0.2)
-    player = player("1P", (500,400), player_bstat, player_phstat)
-
-    entity.wall((2,2))
-    
-    clock = pygame.time.Clock()
-
-    done = False
-    
-    while not done:
-        
-        clock.tick(30)  # 게임의 화면 투사를 30Hz로 설정
-
-        # 이벤트 입력받기
-        for event in pygame.event.get():  # User did something
-            if event.type == pygame.QUIT:  # If user clicked close
-                done = True  # Flag that we are done so we exit this loop
-            if event.type == pygame.KEYDOWN:
-                if event.key == player.keyset['UP']:  # key 'w'
-                    player.keydown['UP'] = True
-                elif event.key == player.keyset['LEFT']:  # key 'a'
-                    player.keydown['LEFT'] = True
-                elif event.key == player.keyset['DOWN']:  # key 's'
-                    player.keydown['DOWN'] = True
-                elif event.key == player.keyset['RIGHT']:  # key 'd'
-                    player.keydown['RIGHT'] = True
-            if event.type == pygame.KEYUP:
-                if event.key == player.keyset['UP']:  # key 'w'
-                    player.keydown['UP'] = False
-                elif event.key == player.keyset['LEFT']:  # key 'a'
-                    player.keydown['LEFT'] = False
-                elif event.key == player.keyset['DOWN']:  # key 's'
-                    player.keydown['DOWN'] = False
-                elif event.key == player.keyset['RIGHT']:  # key 'd'
-                    player.keydown['RIGHT'] = False
-
-        update()  # call update funtion
-
-        pygame.display.flip()
-            
-            
-            
-            
-            
