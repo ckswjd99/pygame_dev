@@ -91,6 +91,7 @@ class mapping:
             self.blocks.append( entity.invisible_wall(self, (size_tiles[0],i)) )
 
         self.characters = []
+        self.carpets = []
 
         self.UI = UI.UI(self)
 
@@ -124,7 +125,7 @@ class mapping:
         self.cam.set_x_limit(-self.size_tiles[0]*entity.TILE_SIZE+size[0]-200, 200)
         self.cam.set_y_limit(-self.size_tiles[1]*entity.TILE_SIZE+size[1]-200, 200)
         self.cam.replace(-player.pos[0]+size[0]/2, -player.pos[1]+size[1]/2)
-        self.player.set_map_now(self)
+        self.player.set_map(self)
         self.transition_type = TRANSITION_OPEN
     
     def update(self):
@@ -155,6 +156,16 @@ class mapping:
                     self.player.keydown['DOWN'] = False
                 elif event.key == self.player.keyset['RIGHT']:  # key 'd'
                     self.player.keydown['RIGHT'] = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.player.mousedown['LEFT'] = True
+                if event.button == 3:
+                    self.player.mousedown['RIGHT'] = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    self.player.mousedown['LEFT'] = False
+                if event.button == 3:
+                    self.player.mousedown['RIGHT'] = False
 
         # PLAYER UPDATE
         self.player.update()
@@ -170,6 +181,11 @@ class mapping:
         for b in self.blocks:
             b.update()
 
+        # CARPETS UPDATE
+        for ca in self.carpets:
+            ca.update()
+            self.carpets.remove(ca)
+
         # UI UPDATE
         self.UI.update()
 
@@ -177,6 +193,8 @@ class mapping:
         if self.transition_type == TRANSITION_CLOSE and self.transition_tick == self.transition_delay:
             self.player.replace((99999,99999))
             self.game_runner.map_change(self.to_map, self.to_pos)
+
+        
 
     def render(self):
         # THINGS TO RENDER:
@@ -193,12 +211,20 @@ class mapping:
         for b in self.blocks:
             b.render()
         
+        # CHARACTERS RENDER
+        for ch in self.characters:
+            ch.render()
+
         # PLAYER RENDER
         self.player.render()
         
         # EFFECTS RENDER
         for e in effect.whole:
             e.render()
+
+        # CARPETS RENDER
+        for ca in self.carpets:
+            ca.render()
 
         # UI RENDER
         self.UI.render()

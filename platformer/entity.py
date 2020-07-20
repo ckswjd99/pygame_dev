@@ -82,7 +82,6 @@ class eventblock(block):
         if self.active == False:
             if self.condition == PLAYER_COLLIDE:
                 if self.poly.colliderect(self.map.player.poly):
-                    print("HI")
                     self.func()
                     self.active = True
             elif self.condition == CHARACTER_COLLIDE:

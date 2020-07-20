@@ -95,6 +95,10 @@ class character:
     def dead(self):
         pass
 
+    def render(self):
+        self.image = pygame.image.load("img/character/character.png")
+        screen.blit(self.image, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1]))
+
 
 #---------- CHILDREN CLASS: PLAYER ----------#
 class player(character):
@@ -102,12 +106,15 @@ class player(character):
         character.__init__(self, name, pos, b_stat, ph_stat)
         self.keyset = {'UP':119, 'LEFT':97, 'DOWN':115, 'RIGHT':100}
         self.keydown = {'UP':False, 'LEFT':False, 'DOWN':False, 'RIGHT':False}
+        self.mousedown = {'LEFT':False, 'RIGHT':False}
         self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
         self.image = pygame.image.load("img/character/player.png")
-        self.slot = [False, False, False, False]
+        self.slot_num = [False, False, False, False]
+        self.slot_mouse = [False, False]
 
-    def set_map_now(self, mapping):
-        self.map_now = mapping
+    def act(self, obj):
+        if obj == False:    # Plain Attack
+            self.map.carpets.append( attack.carpet( self.pos, pygame.Rect(self.pos[0]-25,self.pos[1]-25,50,50), attack.damage(5, attack.NORMAL), 1, self, [self] ) )
     
     def update(self):
         #-- MOVEMENT ------------------------------------------------------------------------------#
@@ -186,7 +193,7 @@ class player(character):
 
             # CHECK AVAILABILITY HERE
             collide = False
-            for g in self.map_now.blocks:
+            for g in self.map.blocks:
                 if self.poly.colliderect(g.poly) == True and g.collision_character == True:
                     collide = True
             if collide == True:
@@ -206,7 +213,7 @@ class player(character):
 
             # CHECK AVAILABILITY HERE
             collide = False
-            for g in self.map_now.blocks:
+            for g in self.map.blocks:
                 if self.poly.colliderect(g.poly) == True and g.collision_character == True:
                     collide = True
             if collide == True:
@@ -222,6 +229,16 @@ class player(character):
         self.speed[1] = int(self.speed[1] * (1-self.ph_stat.air_drag))
         
         #-- \MOVEMENT ------------------------------------------------------------------------------#
+
+
+        #-- ACT ------------------------------------------------------------------------------#
+
+        if self.mousedown['LEFT']:
+            self.act(self.slot_mouse[0])
+        if self.mousedown['RIGHT']:
+            self.act(self.slot_mouse[1])
+
+        #-- ACT ------------------------------------------------------------------------------#
 
 
 
