@@ -67,6 +67,12 @@ class camera:
     def set_focus(self, focus):
         self.focus = focus
 
+    def coord_display_into_gameworld(self, pos):
+        result = [0,0]
+        result[0] = pos[0] - self.offset[0]
+        result[1] = pos[1] - self.offset[1]
+        return result
+
     def update(self):
         # FOCUS ON FOCUS
         focus_smoothe = 5

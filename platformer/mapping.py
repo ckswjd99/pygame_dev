@@ -42,6 +42,7 @@ import UI
 import character
 import attack
 import camera
+import numpy
 
 #---------- CONSTANTS ----------#
 TRANSITION_NONE = 0
@@ -135,6 +136,7 @@ class mapping:
         #   CAMERA
         #   BLOCKS
         # EVENT MANIPULATION
+
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
                 self.game_runner.done = True  # Flag that we are done so we exit loop
@@ -143,10 +145,12 @@ class mapping:
                     self.player.keydown['UP'] = True
                 elif event.key == self.player.keyset['LEFT']:  # key 'a'
                     self.player.keydown['LEFT'] = True
+                    self.player.face = 1
                 elif event.key == self.player.keyset['DOWN']:  # key 's'
                     self.player.keydown['DOWN'] = True
                 elif event.key == self.player.keyset['RIGHT']:  # key 'd'
                     self.player.keydown['RIGHT'] = True
+                    self.player.face = 0
             if event.type == pygame.KEYUP:
                 if event.key == self.player.keyset['UP']:  # key 'w'
                     self.player.keydown['UP'] = False
@@ -166,6 +170,19 @@ class mapping:
                     self.player.mousedown['LEFT'] = False
                 if event.button == 3:
                     self.player.mousedown['RIGHT'] = False
+            if event.type == pygame.MOUSEMOTION:
+                input_pos = self.cam.coord_display_into_gameworld(event.pos)
+                if input_pos[0] != self.player.get_center()[0]:
+                    if input_pos[0]-self.player.get_center()[0] > 0:
+                        self.player.mouse_angle = numpy.arctan( (input_pos[1]-self.player.get_center()[1])/(input_pos[0]-self.player.get_center()[0]) ) / numpy.pi
+                    if input_pos[0]-self.player.get_center()[0] < 0:
+                        self.player.mouse_angle = numpy.arctan( (input_pos[1]-self.player.get_center()[1])/(input_pos[0]-self.player.get_center()[0]) ) / numpy.pi + 1
+                    
+                if input_pos[0] == self.player.get_center()[0]:
+                    if input_pos[1]-self.player.get_center()[1] > 0:
+                        self.player.mouse_angle = 1/2
+                    if input_pos[1]-self.player.get_center()[1] < 0:
+                        self.player.mouse_angle = -1/2
 
         # PLAYER UPDATE
         self.player.update()

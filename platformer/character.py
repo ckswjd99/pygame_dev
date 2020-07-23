@@ -15,6 +15,8 @@ img_exhaust = pygame.image.load("img/character/exhaust.png")
 img_poisoned = pygame.image.load("img/character/poisoned.png")
 img_burning = pygame.image.load("img/character/burning.png")
 
+img_player = pygame.image.load("img/character/player.png")
+
 
 #---------- INFO CONTAINING CLASS ----------#
 class basic_stat:
@@ -44,6 +46,7 @@ class character:
         self.mp = b_stat.max_mp
         self.ph_stat = ph_stat
         self.harms = []
+        self.face = 0
 
         self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
 
@@ -107,16 +110,43 @@ class player(character):
         self.keyset = {'UP':119, 'LEFT':97, 'DOWN':115, 'RIGHT':100}
         self.keydown = {'UP':False, 'LEFT':False, 'DOWN':False, 'RIGHT':False}
         self.mousedown = {'LEFT':False, 'RIGHT':False}
+        self.mousekeepdown = {'LEFT':0, 'RIGHT':0}
         self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
-        self.image = pygame.image.load("img/character/player.png")
+        self.image = img_player
         self.slot_num = [False, False, False, False]
         self.slot_mouse = [False, False]
+        self.mouse_angle = 0
+        self.center_following_coord = [self.pos[0] + self.ph_stat.width/2, self.pos[1] + self.ph_stat.height/2]
+
+    def get_center(self):
+        result = [0,0]
+        result[0] = self.pos[0] + self.ph_stat.width/2
+        result[1] = self.pos[1] + self.ph_stat.height/2
+        return result
 
     def act(self, obj):
         if obj == False:    # Plain Attack
             self.map.carpets.append( attack.carpet( self.pos, pygame.Rect(self.pos[0]-25,self.pos[1]-25,50,50), attack.damage(5, attack.NORMAL), 1, self, [self] ) )
     
     def update(self):
+
+        #-- CENTER FOLLOWING COORD ------------------------------------------------------------------------------#
+        print(self.get_center(), self.center_following_coord)
+        following_constant = 1
+        self.center_following_coord[0] -= (self.center_following_coord[0] - self.get_center()[0])/following_constant
+        self.center_following_coord[1] -= (self.center_following_coord[1] - self.get_center()[1])/following_constant
+        #-- \CENTER FOLLOWING COORD ------------------------------------------------------------------------------#
+
+
+
+        #-- MOUSE ------------------------------------------------------------------------------#
+        if self.mousedown['LEFT'] == True:
+            self.mousekeepdown['LEFT'] += 1
+        if self.mousedown['RIGHT'] == True:
+            self.mousekeepdown['RIGHT'] += 1
+        #-- \MOUSE ------------------------------------------------------------------------------#
+
+
         #-- MOVEMENT ------------------------------------------------------------------------------#
 
         # SELF ACCELERATION
@@ -232,11 +262,12 @@ class player(character):
 
 
         #-- ACT ------------------------------------------------------------------------------#
-
-        if self.mousedown['LEFT']:
+        if self.mousedown['LEFT'] == False and self.mousekeepdown['LEFT'] > 0:
             self.act(self.slot_mouse[0])
-        if self.mousedown['RIGHT']:
+            self.mousekeepdown['LEFT'] = 0
+        if self.mousedown['RIGHT'] == False and self.mousekeepdown['RIGHT'] > 0:
             self.act(self.slot_mouse[1])
+            self.mousekeepdown['RIGHT'] = 0
 
         #-- ACT ------------------------------------------------------------------------------#
 
@@ -265,6 +296,11 @@ class player(character):
         #-- \HARMS ------------------------------------------------------------------------------#
         
     def render(self):
+
+        if self.face == 0:
+            self.image = img_player
+        if self.face == 1:
+            self.image = pygame.transform.flip(img_player, True, False)
         #pygame.gfxdraw.rectangle(screen, self.poly, WHITE)
         if self.controlled['airborne'] == 0:
             screen.blit(self.image, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1]))
@@ -289,6 +325,29 @@ class player(character):
         #    self.footprint_tick = self.footprint_delay
         #else:
         #    self.footprint_tick -= 1
+
+        # HANDS
+        hand_image = pygame.image.load("img/character/player_hand.png")
+        hand_length = 5
+        hand_distance = 16
+        hand_down = 5
+        #   fixed version
+        #screen.blit(hand_image, (hand_distance + self.get_center()[0] + self.map.cam.offset[0] - hand_image.get_width()/2, hand_down + self.get_center()[1] + self.map.cam.offset[1] - hand_image.get_height()/2) )
+        #screen.blit(hand_image, (-hand_distance + self.get_center()[0] + self.map.cam.offset[0] - hand_image.get_width()/2, hand_down + self.get_center()[1] + self.map.cam.offset[1] - hand_image.get_height()/2) )
+        
+        #   following version
+        #screen.blit(hand_image, (hand_distance + self.center_following_coord[0] + self.map.cam.offset[0] - hand_image.get_width()/2, hand_down + self.center_following_coord[1] + self.map.cam.offset[1] - hand_image.get_height()/2) )
+        #screen.blit(hand_image, (-hand_distance+1 + self.center_following_coord[0] + self.map.cam.offset[0] - hand_image.get_width()/2, hand_down + self.center_following_coord[1] + self.map.cam.offset[1] - hand_image.get_height()/2) )
+
+        #   little following version
+        compromise = 0.4
+        screen.blit(hand_image, (hand_distance + ((1-compromise)*self.get_center()[0] + compromise*self.center_following_coord[0]) + self.map.cam.offset[0] - hand_image.get_width()/2, hand_down + ((1-compromise)*self.get_center()[1] + compromise*self.center_following_coord[1]) + self.map.cam.offset[1] - hand_image.get_height()/2) )
+        screen.blit(hand_image, (-hand_distance+1 + ((1-compromise)*self.get_center()[0] + compromise*self.center_following_coord[0]) + self.map.cam.offset[0] - hand_image.get_width()/2, hand_down + ((1-compromise)*self.get_center()[1] + compromise*self.center_following_coord[1]) + self.map.cam.offset[1] - hand_image.get_height()/2) )
+        
+        #   preceding version
+        #screen.blit(hand_image, (hand_distance + 2*self.get_center()[0] - self.center_following_coord[0] + self.map.cam.offset[0] - hand_image.get_width()/2, hand_down + 2*self.get_center()[1] - self.center_following_coord[1] + self.map.cam.offset[1] - hand_image.get_height()/2) )
+        #screen.blit(hand_image, (-hand_distance+1 + 2*self.get_center()[0] - self.center_following_coord[0] + self.map.cam.offset[0] - hand_image.get_width()/2, hand_down + 2*self.get_center()[1] - self.center_following_coord[1] + self.map.cam.offset[1] - hand_image.get_height()/2) )
+        
         
             
             
