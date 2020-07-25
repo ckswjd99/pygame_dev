@@ -91,6 +91,7 @@ class plain_attack(skill):
 
         self.tick = 0
         self.is_pushed = False
+        self.face_fix = self.performer.face
 
         self.image = pygame.image.load("img/attack/plain_attack.png")
         self.image.set_colorkey((0,0,0))

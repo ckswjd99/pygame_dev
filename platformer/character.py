@@ -323,7 +323,7 @@ class player(character):
 
 
         #-- LIGHTS ------------------------------------------------------------------------------#
-        self.map.lights.append(ray.ray_source(self.map, self.get_center(), 0, 2, 200, 50))
+        self.map.lights.append(ray.ray_source(self.map, self.get_center(), 0, 2, 200, 100))
         #-- \LIGHTS ------------------------------------------------------------------------------#
         
     def render(self):

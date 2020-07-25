@@ -13,6 +13,7 @@ class ray:
         self.ray_source = ray_source
         self.pos = pos
         self.angle = angle
+        self.quart_area = int(self.angle*2)
         self.max_dist = max_dist
         self.max_pos = ( int(pos[0] + self.max_dist * cos(self.angle * pi)), int(pos[1] + self.max_dist * sin(self.angle * pi)) )
         self.end_pos = self.max_pos
@@ -21,7 +22,10 @@ class ray:
     def update(self):
         # update endpoint of ray
         self.end_pos = self.max_pos
+        
         for b in self.ray_source.map.blocks:
+            # Optimize: reduce blocks
+
             if b.collision_ray == True:
                 lines = [poly.line((b.poly.x,b.poly.y), (b.poly.x+b.poly.w,b.poly.y)), poly.line((b.poly.x+b.poly.w,b.poly.y), (b.poly.x+b.poly.w,b.poly.y+b.poly.h)), poly.line((b.poly.x+b.poly.w,b.poly.y+b.poly.h), (b.poly.x,b.poly.y+b.poly.h)), poly.line((b.poly.x,b.poly.y+b.poly.h), (b.poly.x,b.poly.y))]
                 for line in lines:

@@ -36,6 +36,7 @@ class runner:
 
             #-- UPDATE FUNCTION ------------------------------------------------------------------------------#
             self.map_now.update()    # Update Map
+            #print(cam.offset)
 
             #-- REDNER FUNCTION ------------------------------------------------------------------------------#
             screen.fill(BLACK)
@@ -49,6 +50,7 @@ class runner:
 
     def map_change(self, map_new, pos_new):
         self.map_now = map_new
+        print(self.player.pos, "<<")
         self.player.set_map(map_new)
         self.map_now.start(self, self.player, pos_new)
 
