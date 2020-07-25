@@ -56,7 +56,7 @@ class invisible_wall(block):
         wall_whole.append(self)
 
         self.collision_character = True
-        self.collision_ray = True
+        self.collision_ray = False
     
     def update(self):
         pass
