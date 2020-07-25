@@ -15,7 +15,7 @@ img_exhaust = pygame.image.load("img/character/exhaust.png")
 img_poisoned = pygame.image.load("img/character/poisoned.png")
 img_burning = pygame.image.load("img/character/burning.png")
 
-img_player = pygame.image.load("img/character/player.png")
+img_player = "img/character/player/"
 
 
 #---------- INFO CONTAINING CLASS ----------#
@@ -26,6 +26,8 @@ class basic_stat:
         self.max_speed = max_speed
         self.max_hp = max_hp
         self.max_mp = max_mp
+        self.physical_power = 5
+        self.magical_power = 5
 
 class physics_stat:
     def __init__(self, width, height, air_drag):
@@ -47,6 +49,7 @@ class character:
         self.ph_stat = ph_stat
         self.harms = []
         self.face = 0
+        self.action = None
 
         self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
 
@@ -110,11 +113,13 @@ class player(character):
         self.keyset = {'UP':119, 'LEFT':97, 'DOWN':115, 'RIGHT':100}
         self.keydown = {'UP':False, 'LEFT':False, 'DOWN':False, 'RIGHT':False}
         self.mousedown = {'LEFT':False, 'RIGHT':False}
-        self.mousekeepdown = {'LEFT':0, 'RIGHT':0}
+        self.action_key = None
+        self.charge = 0
         self.poly = pygame.Rect(self.pos[0], self.pos[1], self.ph_stat.width, self.ph_stat.height)
-        self.image = img_player
+        self.image_source = img_player
+        self.image = pygame.image.load(self.image_source + "normal" + ".png").subsurface(pygame.Rect((0,0), (20,20)))
         self.slot_num = [False, False, False, False]
-        self.slot_mouse = [False, False]
+        self.slot_mouse = [attack.plain_attack(self), attack.plain_attack(self)]
         self.mouse_angle = 0
         self.center_following_coord = [self.pos[0] + self.ph_stat.width/2, self.pos[1] + self.ph_stat.height/2]
 
@@ -123,28 +128,14 @@ class player(character):
         result[0] = self.pos[0] + self.ph_stat.width/2
         result[1] = self.pos[1] + self.ph_stat.height/2
         return result
-
-    def act(self, obj):
-        if obj == False:    # Plain Attack
-            self.map.carpets.append( attack.carpet( self.pos, pygame.Rect(self.pos[0]-25,self.pos[1]-25,50,50), attack.damage(5, attack.NORMAL), 1, self, [self] ) )
     
     def update(self):
 
         #-- CENTER FOLLOWING COORD ------------------------------------------------------------------------------#
-        print(self.get_center(), self.center_following_coord)
         following_constant = 1
         self.center_following_coord[0] -= (self.center_following_coord[0] - self.get_center()[0])/following_constant
         self.center_following_coord[1] -= (self.center_following_coord[1] - self.get_center()[1])/following_constant
         #-- \CENTER FOLLOWING COORD ------------------------------------------------------------------------------#
-
-
-
-        #-- MOUSE ------------------------------------------------------------------------------#
-        if self.mousedown['LEFT'] == True:
-            self.mousekeepdown['LEFT'] += 1
-        if self.mousedown['RIGHT'] == True:
-            self.mousekeepdown['RIGHT'] += 1
-        #-- \MOUSE ------------------------------------------------------------------------------#
 
 
         #-- MOVEMENT ------------------------------------------------------------------------------#
@@ -262,15 +253,30 @@ class player(character):
 
 
         #-- ACT ------------------------------------------------------------------------------#
-        if self.mousedown['LEFT'] == False and self.mousekeepdown['LEFT'] > 0:
-            self.act(self.slot_mouse[0])
-            self.mousekeepdown['LEFT'] = 0
-        if self.mousedown['RIGHT'] == False and self.mousekeepdown['RIGHT'] > 0:
-            self.act(self.slot_mouse[1])
-            self.mousekeepdown['RIGHT'] = 0
+        is_pushed = False
+        if self.action_key == "MOUSE_LEFT":
+            is_pushed = self.mousedown['LEFT']
+        elif self.action_key == "MOUSE_RIGHT":
+            is_pushed = self.mousedown['RIGHT']
 
+        if self.action == None:         # if action is empty, check if new action is added
+            if self.mousedown['LEFT'] == True:
+                self.action_key = "MOUSE_LEFT"
+                self.action = self.slot_mouse[0].copy()
+            if self.mousedown['RIGHT'] == True:
+                self.action_key = "MOUSE_RIGHT"
+                self.action = self.slot_mouse[1].copy()
+        else:                           # there is already action processed
+            self.action.set_is_pushed(is_pushed)
+            if is_pushed == True:       #   controller is still pushing perform key
+                self.charge += 1
+                print(self.charge)
+            else:                       #   controller is not still pushing perform key
+                self.action_key = None
+                self.charge = 0
+            self.action.update()
         #-- ACT ------------------------------------------------------------------------------#
-
+        
 
 
         #-- HARMS ------------------------------------------------------------------------------#
@@ -297,10 +303,8 @@ class player(character):
         
     def render(self):
 
-        if self.face == 0:
-            self.image = img_player
-        if self.face == 1:
-            self.image = pygame.transform.flip(img_player, True, False)
+        self.image = pygame.image.load(self.image_source + "normal" + ".png").subsurface(pygame.Rect((0,40*self.face), (20,20)))
+
         #pygame.gfxdraw.rectangle(screen, self.poly, WHITE)
         if self.controlled['airborne'] == 0:
             screen.blit(self.image, (self.pos[0] + self.map.cam.offset[0], self.pos[1] + self.map.cam.offset[1]))

@@ -1,12 +1,18 @@
 import pygame
+import numpy
 from setting import *
 
-#---------- CONSTANTS ----------#
-PHYSICAL = 0
-MAGICAL = 1
-NORMAL = 2
-POISON = 3
-FIRE = 4
+#---------- CONSTANTS FOR TYPE ----------#
+PHYSICAL    = 0
+MAGICAL     = 1
+NORMAL      = 2
+POISON      = 3
+FIRE        = 4
+
+#---------- CONSTANTS FOR SKILL STATE----------#
+READY       = 0
+ACTION      = 1
+END         = 2
 
 
 
@@ -59,4 +65,77 @@ class carpet:
         cam_rect = self.hitbox.copy()
         cam_rect.move_ip(self.performer.map.cam.offset[0], self.performer.map.cam.offset[1])
         pygame.draw.rect(screen, RED, cam_rect)
+
+
+#-- SKILL CLASS ------------------------------------------------------------------------------#
+class skill:
+    def __init__(self, performer):
+        self.performer = performer
+        self.state = READY
+        self.charge = 0
+
+    def set_state(self, state):
+        self.state = state
+    
+    def update(self):
+        pass
+
+    def render(self):
+        pass
+
+
+#-- PLAIN ATTACK CLASS ------------------------------------------------------------------------------#
+class plain_attack(skill):
+    def __init__(self, performer):
+        skill.__init__(self, performer)
+
+        self.tick = 0
+        self.is_pushed = False
+
+        self.image = pygame.image.load("img/attack/plain_attack.png")
+
+    def set_is_pushed(self, is_pushed):
+        self.is_pushed = is_pushed
+
+    def copy(self):
+        return plain_attack(self.performer)
+
+    def update(self):
+        if self.is_pushed:
+            self.state = READY
+        else:
+            self.state = ACTION
+
+        if self.state == READY:
+            pass
+        elif self.state == ACTION:
+            # SET CARPET!
+            if self.tick == 1:
+                center = [0,0]
+                center[0] = self.performer.get_center()[0] + 20*numpy.cos(self.performer.face)
+                center[1] = self.performer.get_center()[1] + 20*numpy.sin(self.performer.face)
+                hitbox = pygame.Rect( (center[0]-10,center[1]-10), (20,20) )
+                temp_carpet = carpet(center, hitbox, damage(self.performer.b_stat.physical_power, NORMAL), -1, self.performer, [self.performer])
+                self.performer.map.carpets.append( temp_carpet )
+            self.tick += 1
+            if self.tick > 10:
+                self.state = END
+            pass
+        
+        if self.state == END:
+            self.performer.action = None
+            pass
+        print("state", self.state)
+
+    def render(self):
+        if 1 < self.tick and self.tick < 7:
+            offset = [0,0]
+            offset[0] = self.performer.pos[0] + 20*numpy.cos(self.performer.face*numpy.pi) + self.performer.map.cam.offset[0]
+            offset[1] = self.performer.pos[1] + 20*numpy.sin(self.performer.face*numpy.pi) + self.performer.map.cam.offset[1]
+            newimage = pygame.transform.rotate(self.image, -self.performer.face*180)
+            newimage.set_colorkey((0,255,0))
+            screen.blit(newimage, offset)
+        
+
+
 

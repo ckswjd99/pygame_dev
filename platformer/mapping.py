@@ -143,11 +143,13 @@ class mapping:
             if event.type == pygame.KEYDOWN:
                 if event.key == self.player.keyset['UP']:  # key 'w'
                     self.player.keydown['UP'] = True
+                    self.player.face = 1.5
                 elif event.key == self.player.keyset['LEFT']:  # key 'a'
                     self.player.keydown['LEFT'] = True
                     self.player.face = 1
                 elif event.key == self.player.keyset['DOWN']:  # key 's'
                     self.player.keydown['DOWN'] = True
+                    self.player.face = 0.5
                 elif event.key == self.player.keyset['RIGHT']:  # key 'd'
                     self.player.keydown['RIGHT'] = True
                     self.player.face = 0
@@ -234,6 +236,8 @@ class mapping:
 
         # PLAYER RENDER
         self.player.render()
+        if self.player.action != None:
+            self.player.action.render()
         
         # EFFECTS RENDER
         for e in effect.whole:
