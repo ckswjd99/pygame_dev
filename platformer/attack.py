@@ -93,6 +93,7 @@ class plain_attack(skill):
         self.is_pushed = False
 
         self.image = pygame.image.load("img/attack/plain_attack.png")
+        self.image.set_colorkey((0,0,0))
 
     def set_is_pushed(self, is_pushed):
         self.is_pushed = is_pushed
@@ -107,13 +108,14 @@ class plain_attack(skill):
             self.state = ACTION
 
         if self.state == READY:
+            self.face_fix = self.performer.face
             pass
         elif self.state == ACTION:
             # SET CARPET!
             if self.tick == 1:
                 center = [0,0]
-                center[0] = self.performer.get_center()[0] + 20*numpy.cos(self.performer.face)
-                center[1] = self.performer.get_center()[1] + 20*numpy.sin(self.performer.face)
+                center[0] = self.performer.get_center()[0] + 20*numpy.cos(self.face_fix)
+                center[1] = self.performer.get_center()[1] + 20*numpy.sin(self.face_fix)
                 hitbox = pygame.Rect( (center[0]-10,center[1]-10), (20,20) )
                 temp_carpet = carpet(center, hitbox, damage(self.performer.b_stat.physical_power, NORMAL), -1, self.performer, [self.performer])
                 self.performer.map.carpets.append( temp_carpet )
@@ -125,15 +127,14 @@ class plain_attack(skill):
         if self.state == END:
             self.performer.action = None
             pass
-        print("state", self.state)
 
     def render(self):
         if 1 < self.tick and self.tick < 7:
             offset = [0,0]
-            offset[0] = self.performer.pos[0] + 20*numpy.cos(self.performer.face*numpy.pi) + self.performer.map.cam.offset[0]
-            offset[1] = self.performer.pos[1] + 20*numpy.sin(self.performer.face*numpy.pi) + self.performer.map.cam.offset[1]
-            newimage = pygame.transform.rotate(self.image, -self.performer.face*180)
-            newimage.set_colorkey((0,255,0))
+            offset[0] = self.performer.pos[0] + 20*numpy.cos(self.face_fix*numpy.pi) + self.performer.map.cam.offset[0]
+            offset[1] = self.performer.pos[1] + 20*numpy.sin(self.face_fix*numpy.pi) + self.performer.map.cam.offset[1]
+            newimage = pygame.transform.rotate(self.image, -self.face_fix*180).convert()
+            newimage.set_colorkey(newimage.get_at((0,0)))
             screen.blit(newimage, offset)
         
 

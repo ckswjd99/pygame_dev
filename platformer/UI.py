@@ -10,6 +10,9 @@ class UI:
         self.physicalUI = pygame.image.load("img/UI/physical.png")
         self.hp_bar = pygame.image.load("img/UI/hp_bar.png")
         self.mp_bar = pygame.image.load("img/UI/mp_bar.png")
+        self.charge = pygame.image.load("img/UI/charge.png").convert()
+        self.charge.set_colorkey((60,60,60))
+        self.charge_bar = pygame.image.load("img/UI/charge_bar.png")
         self.weapon01UI = pygame.image.load("img/UI/weapon_slot_01.png")
         self.weapon02UI = pygame.image.load("img/UI/weapon_slot_02.png")
         self.util01UI = pygame.image.load("img/UI/util_slot_01.png")
@@ -22,16 +25,23 @@ class UI:
         self.physicalUI = pygame.image.load("img/UI/physical.png")
         self.physicalUI.blit(self.hp_bar, (42,8), pygame.Rect((0,0), (int(self.hp_bar.get_width()*self.map.player.hp/self.map.player.b_stat.max_hp),self.hp_bar.get_height())))
         self.physicalUI.blit(self.mp_bar, (42,32), pygame.Rect((0,0), (int(self.mp_bar.get_width()*self.map.player.mp/self.map.player.b_stat.max_mp),self.mp_bar.get_height())))
+        # CHARGE bar
+        self.charge = pygame.image.load("img/UI/charge.png").convert()
+        self.charge.set_colorkey((60,60,60))
+        self.charge.blit(self.charge_bar, (3,15), pygame.Rect((0,0), (int(self.charge_bar.get_width()*self.map.player.charge / 100), self.charge_bar.get_height())))
 
 
     def render(self):
-            screen.blit(self.physicalUI, (size[0]/2-self.physicalUI.get_width()/2, size[1]-self.physicalUI.get_height()-10))
-            screen.blit(self.weapon01UI, (size[0]-self.weapon01UI.get_width()*2-20, size[1]-self.weapon01UI.get_height()-10))
-            screen.blit(self.weapon02UI, (size[0]-self.weapon02UI.get_width()-10, size[1]-self.weapon02UI.get_height()-10))
-            screen.blit(self.util01UI, (10, size[1]-self.util01UI.get_height()-10))
-            screen.blit(self.util02UI, (10+self.util02UI.get_width()+10, size[1]-self.util02UI.get_height()-10))
-            screen.blit(self.util03UI, (10+(self.util03UI.get_width()+10)*2, size[1]-self.util03UI.get_height()-10))
-            screen.blit(self.util04UI, (10+(self.util04UI.get_width()+10)*3, size[1]-self.util04UI.get_height()-10))
+        screen.blit(self.physicalUI, (size[0]/2-self.physicalUI.get_width()/2, size[1]-self.physicalUI.get_height()-10))
+        screen.blit(self.weapon01UI, (size[0]-self.weapon01UI.get_width()*2-20, size[1]-self.weapon01UI.get_height()-10))
+        screen.blit(self.weapon02UI, (size[0]-self.weapon02UI.get_width()-10, size[1]-self.weapon02UI.get_height()-10))
+        screen.blit(self.util01UI, (10, size[1]-self.util01UI.get_height()-10))
+        screen.blit(self.util02UI, (10+self.util02UI.get_width()+10, size[1]-self.util02UI.get_height()-10))
+        screen.blit(self.util03UI, (10+(self.util03UI.get_width()+10)*2, size[1]-self.util03UI.get_height()-10))
+        screen.blit(self.util04UI, (10+(self.util04UI.get_width()+10)*3, size[1]-self.util04UI.get_height()-10))
+        # CHARGE bar
+        if self.map.player.charge > 3:
+            screen.blit(self.charge, (size[0]/2 - 100, size[1] - 110))
 
 
 

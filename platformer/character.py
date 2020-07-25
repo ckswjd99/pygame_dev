@@ -6,6 +6,7 @@ import poly as polygon
 from topology import *
 from util import *
 import attack
+import ray
 
 whole = []
 
@@ -138,6 +139,20 @@ class player(character):
         #-- \CENTER FOLLOWING COORD ------------------------------------------------------------------------------#
 
 
+        #-- FACE ------------------------------------------------------------------------------#
+        if self.keydown['UP'] == True and self.keydown['LEFT'] == False and self.keydown['DOWN'] == False and self.keydown['RIGHT'] == False:
+            self.face = 1.5
+        elif self.keydown['UP'] == False and self.keydown['LEFT'] == True and self.keydown['DOWN'] == False and self.keydown['RIGHT'] == False:
+            self.face = 1
+        elif self.keydown['UP'] == False and self.keydown['LEFT'] == False and self.keydown['DOWN'] == True and self.keydown['RIGHT'] == False:
+            self.face = 0.5
+        elif self.keydown['UP'] == False and self.keydown['LEFT'] == False and self.keydown['DOWN'] == False and self.keydown['RIGHT'] == True:
+            self.face = 0
+
+        #-- FACE ------------------------------------------------------------------------------#
+
+
+
         #-- MOVEMENT ------------------------------------------------------------------------------#
 
         # SELF ACCELERATION
@@ -246,8 +261,13 @@ class player(character):
                 break
 
         # AIR DRAG FORCE
+        #   RESTRICTION DUE TO CHARGE
+        if self.charge > 10:
+            self.ph_stat.air_drag += 0.3
         self.speed[0] = int(self.speed[0] * (1-self.ph_stat.air_drag))
         self.speed[1] = int(self.speed[1] * (1-self.ph_stat.air_drag))
+        if self.charge > 10:
+            self.ph_stat.air_drag -= 0.3
         
         #-- \MOVEMENT ------------------------------------------------------------------------------#
 
@@ -269,13 +289,13 @@ class player(character):
         else:                           # there is already action processed
             self.action.set_is_pushed(is_pushed)
             if is_pushed == True:       #   controller is still pushing perform key
-                self.charge += 1
-                print(self.charge)
+                if self.charge < 100:
+                    self.charge += 1
             else:                       #   controller is not still pushing perform key
                 self.action_key = None
                 self.charge = 0
             self.action.update()
-        #-- ACT ------------------------------------------------------------------------------#
+        #-- \ACT ------------------------------------------------------------------------------#
         
 
 
@@ -300,6 +320,11 @@ class player(character):
             self.dead()
 
         #-- \HARMS ------------------------------------------------------------------------------#
+
+
+        #-- LIGHTS ------------------------------------------------------------------------------#
+        self.map.lights.append(ray.ray_source(self.map, self.get_center(), 0, 2, 50, 30))
+        #-- \LIGHTS ------------------------------------------------------------------------------#
         
     def render(self):
 
