@@ -123,6 +123,7 @@ class player(character):
         self.slot_mouse = [attack.plain_attack(self), attack.plain_attack(self)]
         self.mouse_angle = 0
         self.center_following_coord = [self.pos[0] + self.ph_stat.width/2, self.pos[1] + self.ph_stat.height/2]
+        self.light = ray.ray_source(self, self.get_center(), 0, 2, 200, 101)
 
     def get_center(self):
         result = [0,0]
@@ -130,6 +131,10 @@ class player(character):
         result[1] = self.pos[1] + self.ph_stat.height/2
         return result
     
+    def set_map(self, map):
+        self.map = map
+        self.map.lights.append(self.light)
+
     def update(self):
 
         #-- CENTER FOLLOWING COORD ------------------------------------------------------------------------------#
@@ -321,10 +326,6 @@ class player(character):
 
         #-- \HARMS ------------------------------------------------------------------------------#
 
-
-        #-- LIGHTS ------------------------------------------------------------------------------#
-        self.map.lights.append(ray.ray_source(self.map, self.get_center(), 0, 2, 200, 100))
-        #-- \LIGHTS ------------------------------------------------------------------------------#
         
     def render(self):
 
