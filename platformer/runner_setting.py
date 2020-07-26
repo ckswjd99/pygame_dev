@@ -47,3 +47,10 @@ test_map2.map_setting([], {'start': (450,250)}, [])
 test_map2.background_setting(pygame.image.load("img/map/test_map2_bg.png"))
 test_map2.add_block( entity.portalblock(test_map2, (15,5), to_map=maps['test_map'], to_pos=maps['test_map'].spawn_list['start']) )
 maps['test_map2'] = test_map2
+
+# START MAP (start_map)
+start_map = mapping.mapping((100,15))
+start_map.map_setting([], {'start': (200,110)}, [])
+start_map.background_setting(pygame.image.load("img/map/start_map_bg.png"))
+
+maps['start_map'] = start_map

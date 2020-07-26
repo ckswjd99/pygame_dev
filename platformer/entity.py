@@ -36,6 +36,9 @@ class wall(block):
 
         self.collision_character = True
         self.collision_ray = True
+
+    def set_image(self, image):
+        self.image = image
     
     def update(self):
         pass

@@ -123,7 +123,7 @@ class player(character):
         self.slot_mouse = [attack.plain_attack(self), attack.plain_attack(self)]
         self.mouse_angle = 0
         self.center_following_coord = [self.pos[0] + self.ph_stat.width/2, self.pos[1] + self.ph_stat.height/2]
-        self.light = ray.ray_source(self, self.get_center(), 0, 2, 200, 101)
+        self.light = ray.ray_source(self, self.get_center(), 0, 2, 100, 151)
 
     def get_center(self):
         result = [0,0]

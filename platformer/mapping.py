@@ -104,7 +104,7 @@ class mapping:
         self.transition_tick = 0
         self.transition_type = TRANSITION_NONE
 
-        self.darkness = 0.9
+        self.darkness = 0.93
         self.lights = []
 
     def background_setting(self, image):
@@ -264,12 +264,6 @@ class mapping:
         for l in self.lights:
             pygame.draw.polygon(darkness, (60,60,60), l.points(self.cam.offset))
         darkness.set_colorkey((60,60,60))
-        
-        #   blur darkness
-        darkness_str = pygame.image.tostring(darkness, "RGBA", False)
-        pil_blured = Image.frombytes("RGBA", darkness.get_size(), darkness_str).filter(ImageFilter.GaussianBlur(radius=6))
-        darkness = pygame.image.fromstring(pil_blured.tobytes("raw", "RGBA"), darkness.get_size(), "RGBA")
-
         
         
         screen.blit(darkness, (0,0))
